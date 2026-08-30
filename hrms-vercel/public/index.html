@@ -3,30 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HRMS — Agency Portal</title>
+<title>Grafio HRMS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f4f5f7; }
-  .card { background:white; border-radius:12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  .tab-btn.active { background:#111827; color:white; }
-  .badge-Full-time { background:#dbeafe; color:#1e40af; }
-  .badge-Part-time { background:#e0e7ff; color:#4338ca; }
-  .badge-Intern { background:#fef3c7; color:#92400e; }
-  .badge-Contractor { background:#fce7f3; color:#9d174d; }
-  .badge-Pending { background:#fef3c7; color:#92400e; }
-  .badge-Approved { background:#d1fae5; color:#065f46; }
-  .badge-Rejected { background:#fee2e2; color:#991b1b; }
-  .badge-Active { background:#d1fae5; color:#065f46; }
-  .badge-Offboarded { background:#f3f4f6; color:#4b5563; }
+  :root {
+    --bg: #F3F4F7;
+    --surface: #FFFFFF;
+    --ink: #14172B;
+    --ink-soft: #5B5F76;
+    --ink-faint: #8B8FA3;
+    --border: #E3E5EC;
+    --sidebar: #12142A;
+    --sidebar-text: #A6AAC2;
+    --sidebar-text-active: #FFFFFF;
+    --accent: #0F6D5C;
+    --accent-dark: #0A4F42;
+    --accent-soft: #E1F1EC;
+    --danger: #C2410C;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--ink); }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .card { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(20,23,43,0.04); }
+  .card h3 { font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 0.85rem; }
+
+  /* Sidebar nav */
+  .sidebar { background: var(--sidebar); }
+  .nav-group-label { color: #565A78; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 0.9rem; margin-top: 1.1rem; margin-bottom: 0.35rem; }
+  .nav-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.9rem; border-radius: 9px; color: var(--sidebar-text); font-size: 0.85rem; font-weight: 500; margin: 0 0.5rem; cursor: pointer; transition: background 0.12s, color 0.12s; border-left: 2.5px solid transparent; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--sidebar-text-active); }
+  .nav-item.active { background: rgba(15,109,92,0.22); color: var(--sidebar-text-active); border-left-color: #29C99A; }
+  .nav-item svg { flex-shrink: 0; opacity: 0.85; }
+  .nav-item.active svg { opacity: 1; }
+
+  /* Buttons */
+  .btn-primary { background: var(--accent); color: white; border-radius: 9px; padding: 0.55rem 1.1rem; font-size: 0.85rem; font-weight: 600; transition: background 0.12s; display: inline-block; text-align: center; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 9px; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 500; transition: border-color 0.12s, background 0.12s; }
+  .btn-secondary:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+  /* Badges */
+  .badge-Full-time { background:#DDECFE; color:#155DAB; }
+  .badge-Part-time { background:#E6E4FE; color:#4B3FC9; }
+  .badge-Intern { background:#FDECD1; color:#9A5B12; }
+  .badge-Contractor { background:#FBE1EE; color:#A31E63; }
+  .badge-Pending { background:#FDECD1; color:#9A5B12; }
+  .badge-Approved { background:#DBF2E7; color:#0F6D5C; }
+  .badge-Rejected { background:#FBE1E1; color:#B02A2A; }
+  .badge-Active { background:#DBF2E7; color:#0F6D5C; }
+  .badge-Offboarded { background:#EBECF1; color:#5B5F76; }
+
   .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:6px; }
-  .icon-btn:hover { background:#f3f4f6; }
-  input, select, textarea { outline: none; }
-  input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 2px #111827; border-color: transparent; }
+  .icon-btn:hover { background:#F3F4F7; }
+  input, select, textarea { outline: none; font-family: var(--font-body); border-color: var(--border) !important; }
+  input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent) !important; }
+
+  /* Tables inside cards */
+  .card table thead th { text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.05em; color: var(--ink-faint); font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 0.55rem; }
+  .card table tbody tr { border-top: 1px solid var(--border); }
+  .card table tbody tr:hover { background: #FAFBFC; }
+  .card table td { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem 1.25rem; border-top: 3px solid var(--accent); }
+  .stat-card .stat-value { font-family: var(--font-mono); font-size: 1.9rem; font-weight: 600; color: var(--ink); line-height: 1.1; }
+  .stat-card .stat-label { font-size: 0.78rem; color: var(--ink-soft); font-weight: 500; margin-bottom: 0.35rem; }
+
   ::-webkit-scrollbar { width:8px; height:8px; }
   ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+  .sidebar ::-webkit-scrollbar-thumb { background: #2A2D48; }
 </style>
 </head>
 <body class="text-gray-800">
+
 
 <div id="app"></div>
 <div id="modalRoot"></div>
@@ -104,36 +160,51 @@ window.closeModal = closeModal;
 function loginScreen() {
   const el = document.getElementById('app');
   el.innerHTML = `
-    <div class="min-h-screen flex items-center justify-center px-4">
-      <div class="card p-8 w-full max-w-md">
-        <div class="text-center mb-6">
-          <div class="text-3xl mb-2">🏢</div>
-          <h1 class="text-2xl font-bold">HRMS Portal</h1>
-          <p class="text-gray-500 text-sm mt-1">Sign in to your agency account</p>
+    <div class="min-h-screen flex">
+      <div class="hidden lg:flex flex-col justify-between w-[42%] p-10 text-white" style="background: linear-gradient(160deg, #12142A 0%, #0F6D5C 130%);">
+        <div class="flex items-center gap-2">
+          <div style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.15);position:relative;flex-shrink:0;">
+            <div style="position:absolute;top:7px;left:7px;width:10px;height:10px;background:rgba(255,255,255,0.9);border-radius:3px;"></div>
+            <div style="position:absolute;bottom:7px;right:7px;width:10px;height:10px;border:1.5px solid rgba(255,255,255,0.9);border-radius:3px;"></div>
+          </div>
+          <span class="font-display font-semibold">Grafio</span>
         </div>
-        <form id="loginForm" class="space-y-4">
-          <div>
-            <label class="text-sm font-medium text-gray-600">Email</label>
-            <input type="email" id="email" required class="w-full mt-1 border rounded-lg px-3 py-2" placeholder="you@agency.local">
+        <div>
+          <h1 class="font-display text-4xl font-semibold leading-tight mb-3">One system for<br>every employment type.</h1>
+          <p class="text-sm" style="color:#C8E8DF;">Full-time, part-time, interns, and contractors — attendance, leave, payroll, and projects, all in one place.</p>
+        </div>
+        <div class="text-xs" style="color:#7FA99C;">© 2026 Grafio Agency</div>
+      </div>
+      <div class="flex-1 flex items-center justify-center px-4">
+        <div class="w-full max-w-sm">
+          <div class="mb-8">
+            <h2 class="font-display text-2xl font-semibold">Welcome back</h2>
+            <p class="text-gray-500 text-sm mt-1">Sign in to your Grafio HRMS account</p>
           </div>
-          <div>
-            <label class="text-sm font-medium text-gray-600">Password</label>
-            <input type="password" id="password" required class="w-full mt-1 border rounded-lg px-3 py-2" placeholder="••••••••">
+          <form id="loginForm" class="space-y-4">
+            <div>
+              <label class="text-xs font-medium text-gray-600">Email</label>
+              <input type="email" id="email" required class="w-full mt-1 border rounded-lg px-3 py-2.5 text-sm" placeholder="you@agency.local">
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-600">Password</label>
+              <input type="password" id="password" required class="w-full mt-1 border rounded-lg px-3 py-2.5 text-sm" placeholder="••••••••">
+            </div>
+            <div id="loginError" class="text-red-600 text-sm hidden"></div>
+            <button type="submit" class="w-full btn-primary py-2.5">Sign in</button>
+          </form>
+          <div class="mt-8 pt-5 border-t text-xs text-gray-500">
+            <p class="font-medium mb-2 text-gray-700">Demo accounts <span class="font-normal text-gray-400">(password: Password123!)</span></p>
+            <ul class="space-y-1">
+              <li class="flex justify-between"><span class="text-gray-400">SystemAdmin</span><span class="mono">ayesha.khan@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">HRAdmin</span><span class="mono">bilal.ahmed@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Manager</span><span class="mono">sara.malik@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Employee</span><span class="mono">usman.tariq@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Finance</span><span class="mono">zainab.iqbal@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Intern</span><span class="mono">ali.raza@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Contractor</span><span class="mono">omar.farooq@agency.local</span></li>
+            </ul>
           </div>
-          <div id="loginError" class="text-red-600 text-sm hidden"></div>
-          <button type="submit" class="w-full bg-gray-900 text-white rounded-lg py-2 font-medium hover:bg-gray-800">Sign In</button>
-        </form>
-        <div class="mt-6 pt-4 border-t text-xs text-gray-500">
-          <p class="font-medium mb-1">Demo accounts (password: Password123!)</p>
-          <ul class="space-y-0.5">
-            <li>SystemAdmin — ayesha.khan@agency.local</li>
-            <li>HRAdmin — bilal.ahmed@agency.local</li>
-            <li>Manager — sara.malik@agency.local</li>
-            <li>Employee (Full-time) — usman.tariq@agency.local</li>
-            <li>Finance — zainab.iqbal@agency.local</li>
-            <li>Intern — ali.raza@agency.local</li>
-            <li>Contractor — omar.farooq@agency.local</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -164,71 +235,130 @@ async function loadMe() {
   state.employee = data.employee;
 }
 
+// ============ ICONS ============
+const ICONS = {
+  home: '<path d="M3 10.5 10 4l7 6.5"/><path d="M5 9v7a1 1 0 0 0 1 1h3v-4h2v4h3a1 1 0 0 0 1-1V9"/>',
+  clock: '<circle cx="10" cy="10" r="7.25"/><path d="M10 6v4l2.75 1.75"/>',
+  leaf: '<path d="M4.5 15.5C3 10 6 4.5 15.5 4.5c0 9.5-5.5 12.5-11 11Z"/><path d="M4.5 15.5 10 10"/>',
+  folder: '<path d="M3 5.5a1 1 0 0 1 1-1h3.8l1.4 1.6H16a1 1 0 0 1 1 1V15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5.5Z"/>',
+  cash: '<rect x="2.5" y="5.5" width="15" height="9" rx="1.5"/><circle cx="10" cy="10" r="2.25"/>',
+  desk: '<path d="M3 8.5h14M6 8.5V16M14 8.5V16M4.5 4l2.5 4.5M15.5 4 13 8.5"/>',
+  users: '<circle cx="7" cy="7.5" r="2.75"/><path d="M2.5 16c0-2.8 2-4.5 4.5-4.5S11.5 13.2 11.5 16"/><circle cx="14" cy="8" r="2.1"/><path d="M13 11.6c2.1.15 3.5 1.7 3.5 4.4"/>',
+  check: '<circle cx="10" cy="10" r="7.25"/><path d="M6.8 10.2 9 12.3l4.2-4.6"/>',
+  briefcase: '<rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1.5M2.5 10.5h15"/>',
+  target: '<circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="3.8"/><circle cx="10" cy="10" r="0.9" fill="currentColor" stroke="none"/>',
+  bank: '<path d="M3 8.5 10 3.5l7 5"/><path d="M4 8.5v6.5M8 8.5v6.5M12 8.5v6.5M16 8.5v6.5"/><path d="M3 16.5h14"/>',
+  chart: '<path d="M3.5 16V4M3.5 16h13M7 13.5v-4M10.5 13.5v-7M14 13.5v-2.5"/>',
+  gear: '<circle cx="10" cy="10" r="2.6"/><path d="M10 3.5v1.7M10 14.8v1.7M16.5 10h-1.7M5.2 10H3.5M14.6 5.4l-1.2 1.2M6.6 13.4l-1.2 1.2M14.6 14.6l-1.2-1.2M6.6 6.6 5.4 5.4"/>',
+  lock: '<rect x="4.5" y="9" width="11" height="7.5" rx="1.5"/><path d="M6.5 9V6.5a3.5 3.5 0 0 1 7 0V9"/>',
+};
+function icon(name) {
+  return `<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;
+}
+
 // ============ TAB CONFIG BY ROLE ============
-function tabsForRole(role) {
-  const common = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-    { id: 'attendance', label: 'Attendance', icon: '⏱️' },
-    { id: 'leave', label: 'Leave', icon: '🌴' },
-    { id: 'projects', label: 'Projects', icon: '📁' },
-    { id: 'payslips', label: 'Payslips', icon: '💵' },
-    { id: 'hrdesk', label: 'HR Desk', icon: '🎫' },
+function navGroupsForRole(role) {
+  const groups = [
+    { label: 'Overview', items: [
+      { id: 'dashboard', label: 'Dashboard', icon: 'home' },
+      { id: 'attendance', label: 'Attendance', icon: 'clock' },
+      { id: 'leave', label: 'Leave', icon: 'leaf' },
+      { id: 'projects', label: 'Projects', icon: 'folder' },
+      { id: 'payslips', label: 'Payslips', icon: 'cash' },
+      { id: 'hrdesk', label: 'HR Desk', icon: 'desk' },
+    ]}
   ];
+  const teamItems = [];
   if (role === 'Manager') {
-    common.push({ id: 'team', label: 'Team', icon: '👥' });
-    common.push({ id: 'approvals', label: 'Approvals', icon: '✅' });
-    common.push({ id: 'performance', label: 'Performance', icon: '🎯' });
+    teamItems.push({ id: 'team', label: 'Team', icon: 'users' });
+    teamItems.push({ id: 'approvals', label: 'Approvals', icon: 'check' });
+    teamItems.push({ id: 'performance', label: 'Performance', icon: 'target' });
   }
   if (['HRAdmin', 'SystemAdmin'].includes(role)) {
-    common.push({ id: 'employees', label: 'Employees', icon: '👥' });
-    common.push({ id: 'recruitment', label: 'Recruitment', icon: '📋' });
-    common.push({ id: 'performance', label: 'Performance', icon: '🎯' });
-    common.push({ id: 'approvals', label: 'Approvals', icon: '✅' });
-    common.push({ id: 'payroll', label: 'Payroll', icon: '🏦' });
-    common.push({ id: 'reports', label: 'Reports', icon: '📊' });
-    common.push({ id: 'settings', label: 'Settings', icon: '⚙️' });
+    teamItems.push({ id: 'employees', label: 'Employees', icon: 'users' });
+    teamItems.push({ id: 'recruitment', label: 'Recruitment', icon: 'briefcase' });
+    teamItems.push({ id: 'performance', label: 'Performance', icon: 'target' });
+    teamItems.push({ id: 'approvals', label: 'Approvals', icon: 'check' });
+  }
+  if (teamItems.length) groups.push({ label: 'Workforce', items: teamItems });
+
+  const financeItems = [];
+  if (['HRAdmin', 'SystemAdmin'].includes(role)) {
+    financeItems.push({ id: 'payroll', label: 'Payroll', icon: 'bank' });
+    financeItems.push({ id: 'reports', label: 'Reports', icon: 'chart' });
   }
   if (role === 'FinanceOfficer') {
-    common.push({ id: 'finance', label: 'Compensation', icon: '💰' });
-    common.push({ id: 'reimbursements', label: 'Reimbursements', icon: '🧾' });
+    financeItems.push({ id: 'finance', label: 'Compensation', icon: 'cash' });
+    financeItems.push({ id: 'reimbursements', label: 'Reimbursements', icon: 'bank' });
   }
-  if (role === 'SystemAdmin') {
-    common.push({ id: 'users', label: 'Users', icon: '🔐' });
-  }
-  return common;
+  if (financeItems.length) groups.push({ label: 'Finance', items: financeItems });
+
+  const adminItems = [];
+  if (['HRAdmin', 'SystemAdmin'].includes(role)) adminItems.push({ id: 'settings', label: 'Settings', icon: 'gear' });
+  if (role === 'SystemAdmin') adminItems.push({ id: 'users', label: 'Users', icon: 'lock' });
+  if (adminItems.length) groups.push({ label: 'Administration', items: adminItems });
+
+  return groups;
+}
+
+function tabsForRole(role) {
+  return navGroupsForRole(role).flatMap(g => g.items);
 }
 
 // ============ SHELL ============
 function shell(contentHtml) {
   const role = state.user.role;
-  const tabs = tabsForRole(role);
+  const groups = navGroupsForRole(role);
+  const initials = (state.employee ? state.employee.full_name : state.user.email).split(/[\s.@]/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase();
+
   return `
-    <div class="min-h-screen">
-      <header class="bg-gray-900 text-white sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="text-xl">🏢</span>
-            <span class="font-semibold">HRMS</span>
-            <span class="text-xs bg-gray-700 px-2 py-0.5 rounded-full ml-2">${role}</span>
+    <div class="min-h-screen flex">
+      <aside class="sidebar w-60 shrink-0 hidden md:flex flex-col py-5 fixed h-screen overflow-y-auto">
+        <div class="flex items-center gap-2 px-4 mb-2">
+          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#29C99A,#0F6D5C);position:relative;flex-shrink:0;">
+            <div style="position:absolute;top:6px;left:6px;width:10px;height:10px;background:rgba(255,255,255,0.85);border-radius:3px;"></div>
+            <div style="position:absolute;bottom:6px;right:6px;width:10px;height:10px;border:1.5px solid rgba(255,255,255,0.85);border-radius:3px;"></div>
           </div>
-          <div class="flex items-center gap-3 text-sm">
-            <span class="hidden sm:inline text-gray-300">${state.employee ? state.employee.full_name : state.user.email}</span>
-            <button onclick="logout()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg">Logout</button>
+          <div>
+            <div class="font-display text-white font-semibold text-sm leading-tight">Grafio</div>
+            <div class="text-[10px] leading-tight" style="color:#6F7390;">HR SYSTEM</div>
           </div>
         </div>
-      </header>
-      <nav class="bg-white border-b overflow-x-auto">
-        <div class="max-w-7xl mx-auto px-4 flex gap-1 py-2">
-          ${tabs.map(t => `
-            <button onclick="switchTab('${t.id}')" class="tab-btn ${state.tab === t.id ? 'active' : 'text-gray-600 hover:bg-gray-100'} px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap">
-              ${t.icon} ${t.label}
-            </button>
+        ${groups.map(g => `
+          <div class="nav-group-label">${g.label}</div>
+          ${g.items.map(t => `
+            <div onclick="switchTab('${t.id}')" class="nav-item ${state.tab === t.id ? 'active' : ''}">
+              ${icon(t.icon)}<span>${t.label}</span>
+            </div>
           `).join('')}
-        </div>
-      </nav>
-      <main class="max-w-7xl mx-auto px-4 py-6">
-        ${contentHtml}
-      </main>
+        `).join('')}
+      </aside>
+
+      <div class="flex-1 md:ml-60 min-w-0">
+        <header class="bg-white border-b sticky top-0 z-10">
+          <div class="px-4 md:px-8 py-3 flex items-center justify-between">
+            <div class="md:hidden flex items-center gap-2 font-display font-semibold">Grafio HRMS</div>
+            <div class="hidden md:block text-sm text-gray-400">${role}</div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);" class="flex items-center justify-center text-xs font-semibold font-display">${initials}</div>
+                <span class="hidden sm:inline text-sm font-medium">${state.employee ? state.employee.full_name : state.user.email}</span>
+              </div>
+              <button onclick="logout()" class="btn-secondary text-xs px-3 py-1.5">Log out</button>
+            </div>
+          </div>
+          <nav class="md:hidden overflow-x-auto border-t">
+            <div class="flex gap-1 px-3 py-2">
+              ${tabsForRole(role).map(t => `
+                <button onclick="switchTab('${t.id}')" class="${state.tab === t.id ? 'btn-primary' : 'btn-secondary'} text-xs px-3 py-1.5 whitespace-nowrap">${t.label}</button>
+              `).join('')}
+            </div>
+          </nav>
+        </header>
+        <main class="max-w-7xl mx-auto px-4 md:px-8 py-6">
+          ${contentHtml}
+        </main>
+      </div>
     </div>
   `;
 }
@@ -244,24 +374,29 @@ window.logout = logout;
 async function dashboardView() {
   const d = await api('/ess/dashboard');
   const empType = state.employee ? state.employee.employment_type : '';
+  const firstName = state.employee ? state.employee.full_name.split(' ')[0] : '';
   return `
+    <div class="mb-6">
+      <h2 class="font-display text-xl font-semibold">Welcome back${firstName ? ', ' + firstName : ''}</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Here's what's happening with your work today.</p>
+    </div>
     <div class="grid md:grid-cols-3 gap-4 mb-6">
-      <div class="card p-5">
-        <p class="text-gray-500 text-sm">Employment Type</p>
-        <p class="text-2xl font-bold mt-1">${badge(empType, 'badge-' + empType)}</p>
+      <div class="stat-card">
+        <p class="stat-label">Employment Type</p>
+        <p class="stat-value" style="font-size:1.2rem;">${badge(empType, 'badge-' + empType)}</p>
       </div>
-      <div class="card p-5">
-        <p class="text-gray-500 text-sm">Pending Leave Requests</p>
-        <p class="text-2xl font-bold mt-1">${d.pending_leave_requests}</p>
+      <div class="stat-card">
+        <p class="stat-label">Pending Leave Requests</p>
+        <p class="stat-value">${d.pending_leave_requests}</p>
       </div>
-      <div class="card p-5">
-        <p class="text-gray-500 text-sm">Active Projects</p>
-        <p class="text-2xl font-bold mt-1">${d.projects.length}</p>
+      <div class="stat-card">
+        <p class="stat-label">Active Projects</p>
+        <p class="stat-value">${d.projects.length}</p>
       </div>
     </div>
     <div class="grid md:grid-cols-2 gap-4">
       <div class="card p-5">
-        <h3 class="font-semibold mb-3">Recent Attendance</h3>
+        <h3>Recent Attendance</h3>
         <table class="w-full text-sm">
           <thead><tr class="text-left text-gray-500"><th class="pb-2">Date</th><th>In</th><th>Out</th><th>Hours</th></tr></thead>
           <tbody>
@@ -295,7 +430,7 @@ async function attendanceView() {
       <h3 class="font-semibold mb-3">Check In / Out</h3>
       <div class="flex gap-3">
         <button onclick="doCheck('check-in')" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700">Check In</button>
-        <button onclick="doCheck('check-out')" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-900">Check Out</button>
+        <button onclick="doCheck('check-out')" class="btn-secondary">Check Out</button>
       </div>
       <div id="checkMsg" class="mt-3 text-sm"></div>
     </div>
@@ -306,7 +441,7 @@ async function attendanceView() {
         <input type="time" name="requested_check_in" class="border rounded-lg px-3 py-2 text-sm" placeholder="Check-in">
         <input type="time" name="requested_check_out" class="border rounded-lg px-3 py-2 text-sm" placeholder="Check-out">
         <input type="text" name="reason" placeholder="Reason" class="border rounded-lg px-3 py-2 text-sm">
-        <button class="sm:col-span-4 bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Submit Request</button>
+        <button class="sm:col-span-4 btn-primary py-2">Submit Request</button>
       </form>
     </div>
     <div class="card p-5">
@@ -369,7 +504,7 @@ async function leaveView() {
         <input type="date" name="start_date" required class="border rounded-lg px-3 py-2 text-sm">
         <input type="date" name="end_date" required class="border rounded-lg px-3 py-2 text-sm">
         <input type="text" name="reason" placeholder="Reason" class="border rounded-lg px-3 py-2 text-sm sm:col-span-1">
-        <button class="bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Apply</button>
+        <button class="btn-primary py-2">Apply</button>
       </form>
       <div class="flex gap-3 mt-3">
         ${balances.map(b => `<div class="text-xs bg-gray-50 rounded-lg px-3 py-2">${b.leave_type}: <b>${b.balance}</b> days</div>`).join('')}
@@ -432,7 +567,7 @@ async function projectsView() {
           <input name="location" placeholder="Location" class="border rounded-lg px-3 py-2 text-sm">
           <input name="start_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
           <input name="end_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
-          <button class="sm:col-span-3 bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Create Project</button>
+          <button class="sm:col-span-3 btn-primary py-2">Create Project</button>
         </form>
       </div>
       <form id="timeLogForm" class="grid sm:grid-cols-5 gap-2">
@@ -445,7 +580,7 @@ async function projectsView() {
           <option value="true">Billable</option>
           <option value="false">Non-billable</option>
         </select>
-        <button class="sm:col-span-5 bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Log Hours</button>
+        <button class="sm:col-span-5 btn-primary py-2">Log Hours</button>
       </form>
     </div>
 
@@ -472,7 +607,7 @@ async function projectsView() {
         </select>
         <input type="number" step="0.01" name="amount" placeholder="Amount" required class="border rounded-lg px-3 py-2 text-sm">
         <input type="text" name="description" placeholder="Description" class="border rounded-lg px-3 py-2 text-sm">
-        <button class="bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Submit Claim</button>
+        <button class="btn-primary py-2">Submit Claim</button>
       </form>
       <table class="w-full text-sm">
         <thead><tr class="text-left text-gray-500"><th class="pb-2">Project</th><th>Amount</th><th>Status</th><th></th></tr></thead>
@@ -536,7 +671,7 @@ async function assignToProject(projectId) {
         ${employees.map(e => `<option value="${e.id}">${e.full_name} (${e.employment_type})</option>`).join('')}
       </select>
       <input name="role_on_project" placeholder="Role on project" class="w-full border rounded-lg px-3 py-2 text-sm">
-      <button class="w-full bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Assign</button>
+      <button class="w-full btn-primary py-2">Assign</button>
     </form>
   `);
   document.getElementById('assignForm').addEventListener('submit', async (e) => {
@@ -630,7 +765,7 @@ async function hrdeskView() {
         <form id="annForm" class="space-y-2 mb-3">
           <input name="title" placeholder="Title" required class="w-full border rounded-lg px-3 py-2 text-sm">
           <textarea name="content" placeholder="Content" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
-          <button class="bg-gray-900 text-white rounded-lg px-3 py-1.5 text-sm">Post</button>
+          <button class="btn-primary text-sm">Post</button>
         </form>` : ''}
         <div class="space-y-2 max-h-72 overflow-y-auto">
           ${announcements.map(a => `
@@ -649,7 +784,7 @@ async function hrdeskView() {
         <form id="policyForm" class="space-y-2 mb-3">
           <input name="title" placeholder="Policy title" required class="w-full border rounded-lg px-3 py-2 text-sm">
           <textarea name="content" placeholder="Content" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
-          <button class="bg-gray-900 text-white rounded-lg px-3 py-1.5 text-sm">Add Policy</button>
+          <button class="btn-primary text-sm">Add Policy</button>
         </form>` : ''}
         <div class="space-y-2 max-h-72 overflow-y-auto">
           ${policies.map(p => `
@@ -669,7 +804,7 @@ async function hrdeskView() {
       <form id="ticketForm" class="grid sm:grid-cols-3 gap-2">
         <input type="text" name="subject" placeholder="Subject" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-1">
         <input type="text" name="description" placeholder="Description" class="border rounded-lg px-3 py-2 text-sm sm:col-span-1">
-        <button class="bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Submit</button>
+        <button class="btn-primary py-2">Submit</button>
       </form>
     </div>` : ''}
     <div class="card p-5">
@@ -844,7 +979,7 @@ async function employeesView() {
     <div class="card p-5 mb-4">
       <div class="flex justify-between items-center mb-3">
         <h3 class="font-semibold">All Employees (${employees.length})</h3>
-        <button onclick="openEmployeeForm()" class="bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg">+ Add Employee</button>
+        <button onclick="openEmployeeForm()" class="btn-primary text-sm px-3 py-1.5 rounded-lg">+ Add Employee</button>
       </div>
       <table class="w-full text-sm">
         <thead><tr class="text-left text-gray-500"><th class="pb-2">Name</th><th>Type</th><th>Department</th><th>Status</th><th></th></tr></thead>
@@ -925,7 +1060,7 @@ async function openEmployeeForm(employee) {
           <input name="engagement_scope" placeholder="Engagement scope" value="${esc(e.engagement_scope)}" class="border rounded-lg px-3 py-2 text-sm col-span-2">
         </div>
       </details>
-      <button class="w-full bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">${isEdit ? 'Save Changes' : 'Create Employee'}</button>
+      <button class="w-full btn-primary py-2">${isEdit ? 'Save Changes' : 'Create Employee'}</button>
     </form>
   `);
 
@@ -983,7 +1118,7 @@ async function recruitmentView() {
           <option value="">Department</option>
           ${depts.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}
         </select>
-        <button class="bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Create</button>
+        <button class="btn-primary py-2">Create</button>
         <input name="description" placeholder="Description" class="border rounded-lg px-3 py-2 text-sm sm:col-span-4">
       </form>
     </div>
@@ -1008,7 +1143,7 @@ async function recruitmentView() {
           <form onsubmit="addCandidate(event, ${r.id})" class="flex gap-2 mb-3">
             <input name="full_name" placeholder="Candidate name" required class="border rounded-lg px-2 py-1 text-xs flex-1">
             <input name="email" placeholder="Email" class="border rounded-lg px-2 py-1 text-xs flex-1">
-            <button class="bg-gray-800 text-white text-xs px-3 py-1 rounded-lg">Add</button>
+            <button class="btn-primary text-xs px-3 py-1">Add</button>
           </form>
           <table class="w-full text-xs">
             <thead><tr class="text-left text-gray-500"><th class="pb-1">Name</th><th>Stage</th><th></th></tr></thead>
@@ -1110,7 +1245,7 @@ async function performanceView() {
         </select>
         <input name="start_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
         <input name="end_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
-        <button class="sm:col-span-4 bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Create Cycle</button>
+        <button class="sm:col-span-4 btn-primary py-2">Create Cycle</button>
       </form>
       <div class="flex flex-wrap gap-2">
         ${cycles.map(c => `<div class="text-xs bg-gray-50 rounded-lg px-3 py-2 flex items-center gap-2">${c.name} (${c.cycle_type}) <button onclick="deleteCycle(${c.id})" class="text-red-600 hover:underline">×</button></div>`).join('') || '<p class="text-gray-400 text-sm">No cycles yet</p>'}
@@ -1128,7 +1263,7 @@ async function performanceView() {
           ${cycles.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
         </select>
         <input name="title" placeholder="Goal title" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-2">
-        <button class="sm:col-span-4 bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Assign Goal</button>
+        <button class="sm:col-span-4 btn-primary py-2">Assign Goal</button>
       </form>
     </div>
 
@@ -1139,7 +1274,7 @@ async function performanceView() {
           ${employees.filter(e => e.employment_type === 'Intern').map(e => `<option value="${e.id}">${e.full_name}</option>`).join('') || '<option value="">No interns</option>'}
         </select>
         <input name="rating" type="number" step="0.1" min="0" max="5" placeholder="Rating (0-5)" class="border rounded-lg px-3 py-2 text-sm">
-        <button class="bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Submit</button>
+        <button class="btn-primary py-2">Submit</button>
         <textarea name="feedback" placeholder="Feedback" class="sm:col-span-4 border rounded-lg px-3 py-2 text-sm" rows="2"></textarea>
       </form>
     </div>
@@ -1168,7 +1303,7 @@ async function performanceView() {
           ${cycles.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
         </select>
         <textarea name="self_assessment" placeholder="How did this cycle go for you?" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
-        <button class="bg-gray-900 text-white rounded-lg px-4 py-2 text-sm font-medium">Submit Self-Assessment</button>
+        <button class="btn-primary">Submit Self-Assessment</button>
       </form>
       <div class="mt-4 space-y-2">
         ${myReviews.map(r => `
@@ -1236,7 +1371,7 @@ async function payrollView() {
           ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}
         </select>
         <input name="period_year" type="number" value="2026" class="border rounded-lg px-3 py-2 text-sm w-24">
-        <button class="bg-gray-900 text-white rounded-lg px-4 py-2 text-sm font-medium">Create Run</button>
+        <button class="btn-primary">Create Run</button>
       </form>
     </div>
     <div class="card p-5">
@@ -1247,7 +1382,7 @@ async function payrollView() {
             <div class="flex justify-between items-center">
               <div><b>${r.period_month}/${r.period_year}</b> ${badge(r.status, r.status === 'Processed' ? 'badge-Approved' : 'badge-Pending')}</div>
               <div class="flex gap-2">
-                ${r.status === 'Draft' ? `<button onclick="processRun(${r.id})" class="bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg">Process</button>
+                ${r.status === 'Draft' ? `<button onclick="processRun(${r.id})" class="btn-primary text-xs px-3 py-1.5 rounded-lg">Process</button>
                 <button onclick="deleteRun(${r.id})" class="text-xs text-red-600 hover:underline">Delete</button>` : ''}
                 <button onclick="viewRunItems(${r.id})" class="text-xs text-blue-600 hover:underline">View Items</button>
               </div>
@@ -1332,7 +1467,7 @@ async function settingsView() {
         <h3 class="font-semibold mb-3">${title}</h3>
         <form onsubmit="addLookup(event, '${table}', '${nameField}')" class="flex gap-2 mb-3">
           <input name="${nameField}" placeholder="New ${title.toLowerCase().slice(0,-1)}" required class="border rounded-lg px-3 py-2 text-sm flex-1">
-          <button class="bg-gray-900 text-white rounded-lg px-3 py-2 text-sm">Add</button>
+          <button class="btn-primary">Add</button>
         </form>
         <div class="space-y-1 max-h-56 overflow-y-auto">
           ${items.map(i => `
@@ -1367,7 +1502,7 @@ async function settingsView() {
         <input name="annual_days" type="number" placeholder="Annual" class="border rounded-lg px-3 py-2 text-sm">
         <input name="sick_days" type="number" placeholder="Sick" class="border rounded-lg px-3 py-2 text-sm">
         <input name="casual_days" type="number" placeholder="Casual" class="border rounded-lg px-3 py-2 text-sm">
-        <button class="sm:col-span-6 bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Add Policy</button>
+        <button class="sm:col-span-6 btn-primary py-2">Add Policy</button>
       </form>
       <table class="w-full text-sm">
         <thead><tr class="text-left text-gray-500"><th class="pb-2">Name</th><th>Applies To</th><th>Annual</th><th>Sick</th><th>Casual</th><th></th></tr></thead>
@@ -1526,7 +1661,7 @@ async function usersView() {
           <option value="">Link to employee (optional)</option>
           ${employees.map(e => `<option value="${e.id}">${e.full_name}</option>`).join('')}
         </select>
-        <button class="sm:col-span-4 bg-gray-900 text-white rounded-lg py-2 text-sm font-medium">Create User</button>
+        <button class="sm:col-span-4 btn-primary py-2">Create User</button>
       </form>
     </div>
     <div class="card p-5">
