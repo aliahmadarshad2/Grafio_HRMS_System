@@ -4,81 +4,318 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Grafio HRMS</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F3F4F7;
-    --surface: #FFFFFF;
-    --ink: #14172B;
-    --ink-soft: #5B5F76;
-    --ink-faint: #8B8FA3;
-    --border: #E3E5EC;
-    --sidebar: #12142A;
-    --sidebar-text: #A6AAC2;
-    --sidebar-text-active: #FFFFFF;
-    --accent: #0F6D5C;
-    --accent-dark: #0A4F42;
-    --accent-soft: #E1F1EC;
-    --danger: #C2410C;
+    --bg: #f6f8fb;
+    --surface: #ffffff;
+    --surface-soft: #f8fafc;
+    --ink: #111827;
+    --ink-soft: #64748b;
+    --ink-faint: #94a3b8;
+    --border: #e7ebf0;
+    --sidebar: #0f172a;
+    --sidebar-2: #111c33;
+    --sidebar-text: #94a3b8;
+    --sidebar-text-active: #ffffff;
+    --accent: #0f766e;
+    --accent-dark: #0b5f59;
+    --accent-bright: #14b8a6;
+    --accent-soft: #e7f7f4;
+    --danger: #dc2626;
+    --warning: #d97706;
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'IBM Plex Mono', monospace;
   }
+
   * { box-sizing: border-box; }
-  body { font-family: var(--font-body); background: var(--bg); color: var(--ink); }
-  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background:
+      radial-gradient(circle at 85% 0%, rgba(20,184,166,.06), transparent 26rem),
+      var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4,.font-display {
+    font-family: var(--font-display);
+    letter-spacing: -.025em;
+  }
   .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
-  .card { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(20,23,43,0.04); }
-  .card h3 { font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 0.85rem; }
+  /* ---------- App shell ---------- */
+  .sidebar {
+    width: 248px !important;
+    background: linear-gradient(180deg, var(--sidebar) 0%, #0b1222 100%);
+    border-right: 1px solid rgba(255,255,255,.05);
+    box-shadow: 8px 0 30px rgba(15,23,42,.05);
+  }
+  .nav-group-label {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 0 14px;
+    margin-top: 22px;
+    margin-bottom: 7px;
+  }
+  .nav-item {
+    display:flex;
+    align-items:center;
+    gap:11px;
+    min-height:40px;
+    padding: 9px 13px;
+    border-radius: 10px;
+    color: var(--sidebar-text);
+    font-size: 13px;
+    font-weight: 550;
+    margin: 2px 10px;
+    cursor:pointer;
+    transition: all .16s ease;
+    border: 1px solid transparent;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover {
+    color:#fff;
+    background:rgba(255,255,255,.055);
+    transform:translateX(1px);
+  }
+  .nav-item.active {
+    color:#fff;
+    background:linear-gradient(90deg, rgba(20,184,166,.20), rgba(20,184,166,.07));
+    border-color:rgba(20,184,166,.10);
+    border-left-color:var(--accent-bright);
+    box-shadow:inset 0 0 20px rgba(20,184,166,.03);
+  }
+  .nav-item svg { flex-shrink:0; opacity:.78; }
+  .nav-item.active svg { opacity:1; color:#5eead4; }
 
-  /* Sidebar nav */
-  .sidebar { background: var(--sidebar); }
-  .nav-group-label { color: #565A78; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 0.9rem; margin-top: 1.1rem; margin-bottom: 0.35rem; }
-  .nav-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.9rem; border-radius: 9px; color: var(--sidebar-text); font-size: 0.85rem; font-weight: 500; margin: 0 0.5rem; cursor: pointer; transition: background 0.12s, color 0.12s; border-left: 2.5px solid transparent; }
-  .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--sidebar-text-active); }
-  .nav-item.active { background: rgba(15,109,92,0.22); color: var(--sidebar-text-active); border-left-color: #29C99A; }
-  .nav-item svg { flex-shrink: 0; opacity: 0.85; }
-  .nav-item.active svg { opacity: 1; }
+  /* ---------- Header ---------- */
+  header.bg-white {
+    background:rgba(255,255,255,.88) !important;
+    backdrop-filter:blur(16px);
+    border-color:rgba(226,232,240,.9) !important;
+    box-shadow:0 1px 0 rgba(15,23,42,.025);
+  }
+  header .btn-secondary { background:#fff; }
 
-  /* Buttons */
-  .btn-primary { background: var(--accent); color: white; border-radius: 9px; padding: 0.55rem 1.1rem; font-size: 0.85rem; font-weight: 600; transition: background 0.12s; display: inline-block; text-align: center; }
-  .btn-primary:hover { background: var(--accent-dark); }
-  .btn-secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 9px; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 500; transition: border-color 0.12s, background 0.12s; }
-  .btn-secondary:hover { border-color: var(--accent); background: var(--accent-soft); }
+  /* ---------- Cards ---------- */
+  .card {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 2px 8px rgba(15,23,42,.035);
+    overflow:hidden;
+    transition:box-shadow .16s ease, border-color .16s ease;
+  }
+  .card:hover {
+    border-color:#dfe5eb;
+    box-shadow:0 8px 24px rgba(15,23,42,.055);
+  }
+  .card h3 {
+    color:var(--ink);
+    font-family:var(--font-display);
+    font-size:15px;
+    font-weight:650;
+    margin-bottom:.85rem;
+  }
 
-  /* Badges */
-  .badge-Full-time { background:#DDECFE; color:#155DAB; }
-  .badge-Part-time { background:#E6E4FE; color:#4B3FC9; }
-  .badge-Intern { background:#FDECD1; color:#9A5B12; }
-  .badge-Contractor { background:#FBE1EE; color:#A31E63; }
-  .badge-Pending { background:#FDECD1; color:#9A5B12; }
-  .badge-Approved { background:#DBF2E7; color:#0F6D5C; }
-  .badge-Rejected { background:#FBE1E1; color:#B02A2A; }
-  .badge-Active { background:#DBF2E7; color:#0F6D5C; }
-  .badge-Offboarded { background:#EBECF1; color:#5B5F76; }
+  /* ---------- Buttons ---------- */
+  .btn-primary {
+    background:linear-gradient(135deg, var(--accent), #0d9488);
+    color:#fff;
+    border:1px solid transparent;
+    border-radius:9px;
+    padding:.58rem 1rem;
+    font-size:.82rem;
+    font-weight:650;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.4rem;
+    cursor:pointer;
+    box-shadow:0 2px 5px rgba(15,118,110,.14);
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn-primary:hover {
+    background:linear-gradient(135deg, var(--accent-dark), #0f766e);
+    transform:translateY(-1px);
+    box-shadow:0 5px 12px rgba(15,118,110,.18);
+  }
+  .btn-primary:active { transform:translateY(0); }
+  .btn-secondary {
+    background:#fff;
+    color:#334155;
+    border:1px solid #dfe5ec;
+    border-radius:9px;
+    padding:.52rem .95rem;
+    font-size:.82rem;
+    font-weight:550;
+    cursor:pointer;
+    transition:all .12s ease;
+  }
+  .btn-secondary:hover {
+    border-color:#99d8d0;
+    background:var(--accent-soft);
+    color:var(--accent-dark);
+  }
 
-  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:6px; }
-  .icon-btn:hover { background:#F3F4F7; }
-  input, select, textarea { outline: none; font-family: var(--font-body); border-color: var(--border) !important; }
-  input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent) !important; }
+  /* ---------- Stats ---------- */
+  .stat-card {
+    position:relative;
+    background:linear-gradient(145deg,#fff,#fbfdfd);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:1.15rem 1.2rem;
+    border-top:0;
+    overflow:hidden;
+  }
+  .stat-card:before {
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:4px;
+    background:linear-gradient(180deg,#2dd4bf,var(--accent));
+  }
+  .stat-card .stat-value {
+    font-family:var(--font-mono);
+    font-size:1.8rem;
+    font-weight:650;
+    color:var(--ink);
+    line-height:1.15;
+  }
+  .stat-card .stat-label {
+    font-size:.74rem;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin-bottom:.45rem;
+    text-transform:uppercase;
+    letter-spacing:.045em;
+  }
 
-  /* Tables inside cards */
-  .card table thead th { text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.05em; color: var(--ink-faint); font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 0.55rem; }
-  .card table tbody tr { border-top: 1px solid var(--border); }
-  .card table tbody tr:hover { background: #FAFBFC; }
-  .card table td { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  /* ---------- Forms ---------- */
+  input,select,textarea {
+    outline:none !important;
+    font-family:var(--font-body) !important;
+    color:#1e293b;
+    background:#fff;
+    border-color:#dfe5ec !important;
+    border-radius:9px !important;
+    transition:border-color .12s, box-shadow .12s, background .12s;
+  }
+  input::placeholder, textarea::placeholder { color:#a3acb9; }
+  input:hover,select:hover,textarea:hover { border-color:#cbd5e1 !important; }
+  input:focus,select:focus,textarea:focus {
+    box-shadow:0 0 0 3px rgba(20,184,166,.11) !important;
+    border-color:var(--accent) !important;
+    background:#fff;
+  }
+  label { letter-spacing:.005em; }
 
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem 1.25rem; border-top: 3px solid var(--accent); }
-  .stat-card .stat-value { font-family: var(--font-mono); font-size: 1.9rem; font-weight: 600; color: var(--ink); line-height: 1.1; }
-  .stat-card .stat-label { font-size: 0.78rem; color: var(--ink-soft); font-weight: 500; margin-bottom: 0.35rem; }
+  /* ---------- Tables ---------- */
+  .card table {
+    border-collapse:separate;
+    border-spacing:0;
+  }
+  .card table thead th {
+    text-transform:uppercase;
+    font-size:10px;
+    letter-spacing:.07em;
+    color:#94a3b8;
+    font-weight:700;
+    border-bottom:1px solid var(--border);
+    padding:0 10px .65rem;
+    white-space:nowrap;
+  }
+  .card table thead th:first-child,
+  .card table tbody td:first-child { padding-left:0; }
+  .card table thead th:last-child,
+  .card table tbody td:last-child { padding-right:0; }
+  .card table tbody tr { border-top:1px solid var(--border); }
+  .card table tbody tr:hover { background:#fafdfc; }
+  .card table td {
+    padding: .72rem 10px;
+    color:#475569;
+    vertical-align:middle;
+    white-space:nowrap;
+  }
+  .card table td:first-child { color:#1e293b; font-weight:550; }
 
+  /* ---------- Badges ---------- */
+  .badge-Full-time { background:#e8f2ff; color:#2563a8; }
+  .badge-Part-time { background:#efedff; color:#5b4bc4; }
+  .badge-Intern { background:#fff3df; color:#a16207; }
+  .badge-Contractor { background:#fcecf4; color:#a21caf; }
+  .badge-Pending { background:#fff3df; color:#a16207; }
+  .badge-Approved { background:#e6f7ef; color:#087f5b; }
+  .badge-Rejected { background:#feecec; color:#b42318; }
+  .badge-Active { background:#e6f7ef; color:#087f5b; }
+  .badge-Offboarded { background:#eef0f3; color:#64748b; }
+
+  /* ---------- Action links / icon buttons ---------- */
+  .icon-btn {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    transition:background .12s;
+  }
+  .icon-btn:hover { background:#f1f5f9; }
+
+  /* ---------- Generic list blocks ---------- */
+  .card .border-b { border-color:var(--border) !important; }
+  .card .border { border-color:var(--border) !important; }
+  .bg-gray-50 { background:#f8fafc !important; }
+  .text-gray-400 { color:#94a3b8 !important; }
+  .text-gray-500 { color:#64748b !important; }
+
+  /* ---------- Modal ---------- */
+  #modalOverlay { backdrop-filter:blur(4px); background:rgba(15,23,42,.52) !important; }
+  #modalOverlay > .card {
+    box-shadow:0 24px 70px rgba(15,23,42,.25);
+    border-radius:18px;
+  }
+
+  /* ---------- Toast ---------- */
+  #toastRoot > div {
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 10px 30px rgba(15,23,42,.18);
+  }
+
+  /* ---------- Loading / errors ---------- */
+  #content-slot > .card.text-red-600 {
+    border-color:#fecaca;
+    background:#fff7f7;
+  }
+
+  /* ---------- Scrollbars ---------- */
   ::-webkit-scrollbar { width:8px; height:8px; }
-  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
-  .sidebar ::-webkit-scrollbar-thumb { background: #2A2D48; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+  .sidebar::-webkit-scrollbar-thumb { background:#26334d; }
+
+  /* ---------- Responsive polish ---------- */
+  @media (max-width: 767px) {
+    .sidebar { display:none !important; }
+    main { padding-top:1.1rem !important; }
+    .card { border-radius:14px; }
+    .card table { min-width:650px; }
+    .card:has(table) { overflow-x:auto; }
+    header .overflow-x-auto { scrollbar-width:none; }
+    header .overflow-x-auto::-webkit-scrollbar { display:none; }
+  }
+  @media (min-width: 768px) {
+    .md\:ml-60 { margin-left:248px !important; }
+  }
 </style>
 </head>
 <body class="text-gray-800">
@@ -309,53 +546,88 @@ function tabsForRole(role) {
 function shell(contentHtml) {
   const role = state.user.role;
   const groups = navGroupsForRole(role);
-  const initials = (state.employee ? state.employee.full_name : state.user.email).split(/[\s.@]/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase();
+  const initials = (state.employee ? state.employee.full_name : state.user.email)
+    .split(/[\s.@]/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase();
+
+  const pageNames = {
+    dashboard:'Dashboard', attendance:'Attendance', leave:'Leave',
+    projects:'Projects', payslips:'Payslips', hrdesk:'HR Desk',
+    team:'Team Attendance', approvals:'Approvals', employees:'Employees',
+    recruitment:'Recruitment', performance:'Performance', payroll:'Payroll',
+    reports:'Reports', settings:'Settings', finance:'Compensation',
+    reimbursements:'Reimbursements', users:'User Management'
+  };
+  const pageName = pageNames[state.tab] || 'Workspace';
+  const displayName = state.employee ? state.employee.full_name : state.user.email;
 
   return `
     <div class="min-h-screen flex">
-      <aside class="sidebar w-60 shrink-0 hidden md:flex flex-col py-5 fixed h-screen overflow-y-auto">
-        <div class="flex items-center gap-2 px-4 mb-2">
-          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#29C99A,#0F6D5C);position:relative;flex-shrink:0;">
-            <div style="position:absolute;top:6px;left:6px;width:10px;height:10px;background:rgba(255,255,255,0.85);border-radius:3px;"></div>
-            <div style="position:absolute;bottom:6px;right:6px;width:10px;height:10px;border:1.5px solid rgba(255,255,255,0.85);border-radius:3px;"></div>
-          </div>
-          <div>
-            <div class="font-display text-white font-semibold text-sm leading-tight">Grafio</div>
-            <div class="text-[10px] leading-tight" style="color:#6F7390;">HR SYSTEM</div>
+      <aside class="sidebar w-60 shrink-0 hidden md:flex flex-col py-5 fixed h-screen overflow-y-auto z-20">
+        <div class="px-5 mb-7">
+          <div class="flex items-center gap-3">
+            <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2dd4bf,#0f766e);position:relative;flex-shrink:0;box-shadow:0 6px 18px rgba(20,184,166,.18);">
+              <div style="position:absolute;top:8px;left:8px;width:11px;height:11px;background:rgba(255,255,255,.92);border-radius:3px;"></div>
+              <div style="position:absolute;bottom:8px;right:8px;width:11px;height:11px;border:1.5px solid rgba(255,255,255,.9);border-radius:3px;"></div>
+            </div>
+            <div>
+              <div class="font-display text-white font-bold text-base leading-tight">Grafio</div>
+              <div class="text-[9px] font-semibold tracking-[.18em]" style="color:#64748b;">HR MANAGEMENT</div>
+            </div>
           </div>
         </div>
-        ${groups.map(g => `
-          <div class="nav-group-label">${g.label}</div>
-          ${g.items.map(t => `
-            <div onclick="switchTab('${t.id}')" class="nav-item ${state.tab === t.id ? 'active' : ''}">
-              ${icon(t.icon)}<span>${t.label}</span>
-            </div>
+
+        <div class="px-3">
+          ${groups.map(g => `
+            <div class="nav-group-label">${g.label}</div>
+            ${g.items.map(t => `
+              <div onclick="switchTab('${t.id}')" class="nav-item ${state.tab === t.id ? 'active' : ''}">
+                ${icon(t.icon)}<span>${t.label}</span>
+              </div>
+            `).join('')}
           `).join('')}
-        `).join('')}
+        </div>
+
+        <div class="mt-auto px-4 pt-5">
+          <div class="rounded-xl p-3" style="background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);">
+            <div class="text-[10px] uppercase tracking-wider font-semibold" style="color:#64748b;">Signed in as</div>
+            <div class="text-xs text-white font-medium mt-1 truncate">${displayName}</div>
+            <div class="text-[10px] mt-0.5" style="color:#64748b;">${role}</div>
+          </div>
+        </div>
       </aside>
 
       <div class="flex-1 md:ml-60 min-w-0">
         <header class="bg-white border-b sticky top-0 z-10">
-          <div class="px-4 md:px-8 py-3 flex items-center justify-between">
-            <div class="md:hidden flex items-center gap-2 font-display font-semibold">Grafio HRMS</div>
-            <div class="hidden md:block text-sm text-gray-400">${role}</div>
-            <div class="flex items-center gap-3">
-              <div class="flex items-center gap-2">
-                <div style="width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);" class="flex items-center justify-center text-xs font-semibold font-display">${initials}</div>
-                <span class="hidden sm:inline text-sm font-medium">${state.employee ? state.employee.full_name : state.user.email}</span>
+          <div class="px-4 md:px-8 py-3.5 flex items-center justify-between gap-4">
+            <div class="min-w-0">
+              <div class="md:hidden flex items-center gap-2 font-display font-bold text-base mb-0.5">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;"></span>
+                Grafio HRMS
               </div>
-              <button onclick="logout()" class="btn-secondary text-xs px-3 py-1.5">Log out</button>
+              <div class="hidden md:block text-[11px] font-semibold uppercase tracking-[.12em] text-slate-400">Workspace</div>
+              <div class="font-display font-semibold text-lg text-slate-800 truncate">${pageName}</div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div class="hidden sm:block text-right mr-1">
+                <div class="text-xs font-semibold text-slate-700">${displayName}</div>
+                <div class="text-[10px] text-slate-400">${role}</div>
+              </div>
+              <div style="width:36px;height:36px;border-radius:11px;background:var(--accent-soft);color:var(--accent-dark);border:1px solid #ccece6;" class="flex items-center justify-center text-xs font-bold font-display">${initials}</div>
+              <button onclick="logout()" class="btn-secondary text-xs px-3 py-2">Log out</button>
             </div>
           </div>
+
           <nav class="md:hidden overflow-x-auto border-t">
-            <div class="flex gap-1 px-3 py-2">
+            <div class="flex gap-1.5 px-3 py-2">
               ${tabsForRole(role).map(t => `
                 <button onclick="switchTab('${t.id}')" class="${state.tab === t.id ? 'btn-primary' : 'btn-secondary'} text-xs px-3 py-1.5 whitespace-nowrap">${t.label}</button>
               `).join('')}
             </div>
           </nav>
         </header>
-        <main class="max-w-7xl mx-auto px-4 md:px-8 py-6">
+
+        <main class="max-w-7xl mx-auto px-4 md:px-8 py-7">
           ${contentHtml}
         </main>
       </div>
