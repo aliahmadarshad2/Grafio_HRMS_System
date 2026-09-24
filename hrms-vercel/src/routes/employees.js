@@ -244,6 +244,7 @@ router.get('/upcoming-events', authenticate, async (req, res) => {
   const windowDays = parseInt(req.query.days || '30', 10);
   const employees = await db.all(`
     SELECT id, full_name, date_of_birth, hire_date FROM employees WHERE status = 'Active'
+    console.log(full_name)
   `);
 
   const today = new Date();
