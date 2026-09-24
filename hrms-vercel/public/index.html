@@ -530,6 +530,7 @@ function navGroupsForRole(role) {
       { id: 'leave', label: 'Leave', icon: 'leaf' },
       { id: 'projects', label: 'Projects', icon: 'folder' },
       { id: 'payslips', label: 'Payslips', icon: 'cash' },
+       { id: 'tasks', label: 'Tasks', icon: 'folder' },
       { id: 'hrdesk', label: 'HR Desk', icon: 'desk' },
     ]}
   ];
@@ -2039,6 +2040,7 @@ async function renderContent() {
       case 'settings': html = await settingsView(); break;
       case 'finance': html = await financeView(); break;
       case 'reimbursements': html = await reimbursementsView(); break;
+      case 'tasks': html = await tasksView(); break;
       case 'users': html = await usersView(); break;
       default: html = '<p>Not found</p>';
     }
