@@ -240,4 +240,40 @@ router.delete('/:id/skills/:skillId', authenticate, authorize('HRAdmin', 'System
   res.json({ success: true });
 });
 
+router.get('/upcoming-events', authenticate, async (req, res) => {
+  const windowDays = parseInt(req.query.days || '30', 10);
+  const employees = await db.all(`
+    SELECT id, full_name, date_of_birth, hire_date FROM employees WHERE status = 'Active'
+  `);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  function nextOccurrence(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    const next = new Date(today.getFullYear(), d.getMonth(), d.getDate());
+    if (next < today) next.setFullYear(next.getFullYear() + 1);
+    return next;
+  }
+  function daysBetween(a, b) { return Math.round((b - a) / (1000 * 60 * 60 * 24)); }
+
+  const events = [];
+  for (const e of employees) {
+    const bday = nextOccurrence(e.date_of_birth);
+    if (bday && daysBetween(today, bday) <= windowDays) {
+      events.push({ employee_id: e.id, full_name: e.full_name, type: 'Birthday', date: bday.toISOString().slice(0, 10), days_until: daysBetween(today, bday) });
+    }
+    const anniv = nextOccurrence(e.hire_date);
+    if (anniv && e.hire_date && daysBetween(today, anniv) <= windowDays) {
+      const years = new Date(anniv).getFullYear() - new Date(e.hire_date).getFullYear();
+      if (years > 0) {
+        events.push({ employee_id: e.id, full_name: e.full_name, type: 'Anniversary', date: anniv.toISOString().slice(0, 10), days_until: daysBetween(today, anniv), years });
+      }
+    }
+  }
+  events.sort((a, b) => a.days_until - b.days_until);
+  res.json(events);
+});
+
 module.exports = router;
