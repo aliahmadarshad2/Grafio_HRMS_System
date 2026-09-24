@@ -34,6 +34,7 @@ app.use('/api/recruitment', require('./routes/recruitment'));
 app.use('/api/performance', require('./routes/performance'));
 app.use('/api/ess', require('./routes/ess'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/tasks', require('./routes/tasks'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
