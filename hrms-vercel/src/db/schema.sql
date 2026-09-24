@@ -312,3 +312,16 @@ CREATE TABLE IF NOT EXISTS compensation (
   contractor_rate REAL,
   currency TEXT DEFAULT 'USD'
 );
+
+CREATE TABLE IF NOT EXISTS tasks (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+  assigned_by INTEGER REFERENCES employees(id) ON DELETE SET NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  due_date DATE,
+  status TEXT DEFAULT 'Pending' CHECK (status IN ('Pending','InProgress','Completed')),
+  created_at TIMESTAMP DEFAULT NOW(),
+  completed_at TIMESTAMP
+);
+
