@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafio HRMS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f8fb;
+    --surface: #ffffff;
+    --surface-soft: #f8fafc;
+    --ink: #111827;
+    --ink-soft: #64748b;
+    --ink-faint: #94a3b8;
+    --border: #e7ebf0;
+    --sidebar: #0f172a;
+    --sidebar-2: #111c33;
+    --sidebar-text: #94a3b8;
+    --sidebar-text-active: #ffffff;
+    --accent: #0f766e;
+    --accent-dark: #0b5f59;
+    --accent-bright: #14b8a6;
+    --accent-soft: #e7f7f4;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background:
+      radial-gradient(circle at 85% 0%, rgba(20,184,166,.06), transparent 26rem),
+      var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4,.font-display {
+    font-family: var(--font-display);
+    letter-spacing: -.025em;
+  }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  /* ---------- App shell ---------- */
+  .sidebar {
+    width: 248px !important;
+    background: linear-gradient(180deg, var(--sidebar) 0%, #0b1222 100%);
+    border-right: 1px solid rgba(255,255,255,.05);
+    box-shadow: 8px 0 30px rgba(15,23,42,.05);
+  }
+  .nav-group-label {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 0 14px;
+    margin-top: 22px;
+    margin-bottom: 7px;
+  }
+  .nav-item {
+    display:flex;
+    align-items:center;
+    gap:11px;
+    min-height:40px;
+    padding: 9px 13px;
+    border-radius: 10px;
+    color: var(--sidebar-text);
+    font-size: 13px;
+    font-weight: 550;
+    margin: 2px 10px;
+    cursor:pointer;
+    transition: all .16s ease;
+    border: 1px solid transparent;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover {
+    color:#fff;
+    background:rgba(255,255,255,.055);
+    transform:translateX(1px);
+  }
+  .nav-item.active {
+    color:#fff;
+    background:linear-gradient(90deg, rgba(20,184,166,.20), rgba(20,184,166,.07));
+    border-color:rgba(20,184,166,.10);
+    border-left-color:var(--accent-bright);
+    box-shadow:inset 0 0 20px rgba(20,184,166,.03);
+  }
+  .nav-item svg { flex-shrink:0; opacity:.78; }
+  .nav-item.active svg { opacity:1; color:#5eead4; }
+
+  /* ---------- Header ---------- */
+  header.bg-white {
+    background:rgba(255,255,255,.88) !important;
+    backdrop-filter:blur(16px);
+    border-color:rgba(226,232,240,.9) !important;
+    box-shadow:0 1px 0 rgba(15,23,42,.025);
+  }
+  header .btn-secondary { background:#fff; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 2px 8px rgba(15,23,42,.035);
+    overflow:hidden;
+    transition:box-shadow .16s ease, border-color .16s ease;
+  }
+  .card:hover {
+    border-color:#dfe5eb;
+    box-shadow:0 8px 24px rgba(15,23,42,.055);
+  }
+  .card h3 {
+    color:var(--ink);
+    font-family:var(--font-display);
+    font-size:15px;
+    font-weight:650;
+    margin-bottom:.85rem;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn-primary {
+    background:linear-gradient(135deg, var(--accent), #0d9488);
+    color:#fff;
+    border:1px solid transparent;
+    border-radius:9px;
+    padding:.58rem 1rem;
+    font-size:.82rem;
+    font-weight:650;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.4rem;
+    cursor:pointer;
+    box-shadow:0 2px 5px rgba(15,118,110,.14);
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn-primary:hover {
+    background:linear-gradient(135deg, var(--accent-dark), #0f766e);
+    transform:translateY(-1px);
+    box-shadow:0 5px 12px rgba(15,118,110,.18);
+  }
+  .btn-primary:active { transform:translateY(0); }
+  .btn-secondary {
+    background:#fff;
+    color:#334155;
+    border:1px solid #dfe5ec;
+    border-radius:9px;
+    padding:.52rem .95rem;
+    font-size:.82rem;
+    font-weight:550;
+    cursor:pointer;
+    transition:all .12s ease;
+  }
+  .btn-secondary:hover {
+    border-color:#99d8d0;
+    background:var(--accent-soft);
+    color:var(--accent-dark);
+  }
+
+  /* ---------- Stats ---------- */
+  .stat-card {
+    position:relative;
+    background:linear-gradient(145deg,#fff,#fbfdfd);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:1.15rem 1.2rem;
+    border-top:0;
+    overflow:hidden;
+  }
+  .stat-card:before {
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:4px;
+    background:linear-gradient(180deg,#2dd4bf,var(--accent));
+  }
+  .stat-card .stat-value {
+    font-family:var(--font-mono);
+    font-size:1.8rem;
+    font-weight:650;
+    color:var(--ink);
+    line-height:1.15;
+  }
+  .stat-card .stat-label {
+    font-size:.74rem;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin-bottom:.45rem;
+    text-transform:uppercase;
+    letter-spacing:.045em;
+  }
+
+  /* ---------- Forms ---------- */
+  input,select,textarea {
+    outline:none !important;
+    font-family:var(--font-body) !important;
+    color:#1e293b;
+    background:#fff;
+    border-color:#dfe5ec !important;
+    border-radius:9px !important;
+    transition:border-color .12s, box-shadow .12s, background .12s;
+  }
+  input::placeholder, textarea::placeholder { color:#a3acb9; }
+  input:hover,select:hover,textarea:hover { border-color:#cbd5e1 !important; }
+  input:focus,select:focus,textarea:focus {
+    box-shadow:0 0 0 3px rgba(20,184,166,.11) !important;
+    border-color:var(--accent) !important;
+    background:#fff;
+  }
+  label { letter-spacing:.005em; }
+
+  /* ---------- Tables ---------- */
+  .card table {
+    border-collapse:separate;
+    border-spacing:0;
+  }
+  .card table thead th {
+    text-transform:uppercase;
+    font-size:10px;
+    letter-spacing:.07em;
+    color:#94a3b8;
+    font-weight:700;
+    border-bottom:1px solid var(--border);
+    padding:0 10px .65rem;
+    white-space:nowrap;
+  }
+  .card table thead th:first-child,
+  .card table tbody td:first-child { padding-left:0; }
+  .card table thead th:last-child,
+  .card table tbody td:last-child { padding-right:0; }
+  .card table tbody tr { border-top:1px solid var(--border); }
+  .card table tbody tr:hover { background:#fafdfc; }
+  .card table td {
+    padding: .72rem 10px;
+    color:#475569;
+    vertical-align:middle;
+    white-space:nowrap;
+  }
+  .card table td:first-child { color:#1e293b; font-weight:550; }
+
+  /* ---------- Badges ---------- */
+  .badge-Full-time { background:#e8f2ff; color:#2563a8; }
+  .badge-Part-time { background:#efedff; color:#5b4bc4; }
+  .badge-Intern { background:#fff3df; color:#a16207; }
+  .badge-Contractor { background:#fcecf4; color:#a21caf; }
+  .badge-Pending { background:#fff3df; color:#a16207; }
+  .badge-Approved { background:#e6f7ef; color:#087f5b; }
+  .badge-Rejected { background:#feecec; color:#b42318; }
+  .badge-Active { background:#e6f7ef; color:#087f5b; }
+  .badge-Offboarded { background:#eef0f3; color:#64748b; }
+
+  /* ---------- Action links / icon buttons ---------- */
+  .icon-btn {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    transition:background .12s;
+  }
+  .icon-btn:hover { background:#f1f5f9; }
+
+  /* ---------- Generic list blocks ---------- */
+  .card .border-b { border-color:var(--border) !important; }
+  .card .border { border-color:var(--border) !important; }
+  .bg-gray-50 { background:#f8fafc !important; }
+  .text-gray-400 { color:#94a3b8 !important; }
+  .text-gray-500 { color:#64748b !important; }
+
+  /* ---------- Modal ---------- */
+  #modalOverlay { backdrop-filter:blur(4px); background:rgba(15,23,42,.52) !important; }
+  #modalOverlay > .card {
+    box-shadow:0 24px 70px rgba(15,23,42,.25);
+    border-radius:18px;
+  }
+
+  /* ---------- Toast ---------- */
+  #toastRoot > div {
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 10px 30px rgba(15,23,42,.18);
+  }
+
+  /* ---------- Loading / errors ---------- */
+  #content-slot > .card.text-red-600 {
+    border-color:#fecaca;
+    background:#fff7f7;
+  }
+
+  /* ---------- Scrollbars ---------- */
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+  .sidebar::-webkit-scrollbar-thumb { background:#26334d; }
+
+  /* ---------- Responsive polish ---------- */
+  @media (max-width: 767px) {
+    .sidebar { display:none !important; }
+    main { padding-top:1.1rem !important; }
+    .card { border-radius:14px; }
+    .card table { min-width:650px; }
+    .card:has(table) { overflow-x:auto; }
+    header .overflow-x-auto { scrollbar-width:none; }
+    header .overflow-x-auto::-webkit-scrollbar { display:none; }
+  }
+  @media (min-width: 768px) {
+    .md\:ml-60 { margin-left:248px !important; }
+  }
+
+  .field-label { display:block; font-size:.72rem; font-weight:600; color:#6b7280; margin-bottom:.35rem; }
+  .task-row { transition: background .15s ease; }
+
+</style>
+</head>
+<body class="text-gray-800">
+
+
+<div id="app"></div>
+<div id="modalRoot"></div>
+<div id="toastRoot" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+<script>
+const API = '/api';
+let state = { token: localStorage.getItem('hrms_token') || null, user: null, employee: null, tab: 'dashboard' };
+
+// ============ CORE HELPERS ============
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+  const res = await fetch(API + path, { ...opts, headers });
+  if (res.status === 401) { logout(); throw new Error('Session expired'); }
+  const contentType = res.headers.get('content-type') || '';
+  const data = contentType.includes('json') ? await res.json() : await res.text();
+  if (!res.ok) throw new Error((data && data.error) || 'Request failed');
+  return data;
+}
+
+function logout() {
+  state = { token: null, user: null, employee: null, tab: 'dashboard' };
+  localStorage.removeItem('hrms_token');
+  render();
+}
+
+function badge(text, cls) {
+  return `<span class="text-xs px-2 py-1 rounded-full font-medium ${cls || 'bg-gray-100 text-gray-700'}">${text || ''}</span>`;
+}
+
+function toast(msg, isError) {
+  const el = document.createElement('div');
+  el.className = `px-4 py-2.5 rounded-lg shadow-lg text-sm text-white ${isError ? 'bg-red-600' : 'bg-gray-900'}`;
+  el.textContent = msg;
+  document.getElementById('toastRoot').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+function esc(s) { return (s === null || s === undefined) ? '' : String(s).replace(/"/g, '&quot;'); }
+
+// Generic confirm-then-run for delete actions
+async function confirmRun(message, fn) {
+  if (!confirm(message)) return;
+  try {
+    await fn();
+    toast('Done');
+    render();
+  } catch (e) {
+    toast(e.message, true);
+  }
+}
+
+// ============ MODAL SYSTEM ============
+function openModal(title, bodyHtml) {
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="fixed inset-0 bg-black/50 flex items-start sm:items-center justify-center z-50 p-4 overflow-y-auto" id="modalOverlay">
+      <div class="card p-6 w-full max-w-lg my-8" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-semibold text-lg">${title}</h3>
+          <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+        </div>
+        ${bodyHtml}
+      </div>
+    </div>
+  `;
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+}
+function closeModal() { document.getElementById('modalRoot').innerHTML = ''; }
+window.closeModal = closeModal;
+
+// ============ LOGIN SCREEN ============
+function loginScreen() {
+  const el = document.getElementById('app');
+  el.innerHTML = `
+    <div class="min-h-screen flex">
+      <div class="hidden lg:flex flex-col justify-between w-[42%] p-10 text-white" style="background: linear-gradient(160deg, #12142A 0%, #0F6D5C 130%);">
+        <div class="flex items-center gap-2">
+          <div style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.15);position:relative;flex-shrink:0;">
+            <div style="position:absolute;top:7px;left:7px;width:10px;height:10px;background:rgba(255,255,255,0.9);border-radius:3px;"></div>
+            <div style="position:absolute;bottom:7px;right:7px;width:10px;height:10px;border:1.5px solid rgba(255,255,255,0.9);border-radius:3px;"></div>
+          </div>
+          <span class="font-display font-semibold">Grafio</span>
+        </div>
+        <div>
+          <h1 class="font-display text-4xl font-semibold leading-tight mb-3">One system for<br>every employment type.</h1>
+          <p class="text-sm" style="color:#C8E8DF;">Full-time, part-time, interns, and contractors — attendance, leave, payroll, and projects, all in one place.</p>
+        </div>
+        <div class="text-xs" style="color:#7FA99C;">© 2026 Grafio Agency</div>
+      </div>
+      <div class="flex-1 flex items-center justify-center px-4">
+        <div class="w-full max-w-sm">
+          <div class="mb-8">
+            <h2 class="font-display text-2xl font-semibold">Welcome back</h2>
+            <p class="text-gray-500 text-sm mt-1">Sign in to your Grafio HRMS account</p>
+          </div>
+          <form id="loginForm" class="space-y-4">
+            <div>
+              <label class="text-xs font-medium text-gray-600">Email</label>
+              <input type="email" id="email" required class="w-full mt-1 border rounded-lg px-3 py-2.5 text-sm" placeholder="you@agency.local">
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-600">Password</label>
+              <input type="password" id="password" required class="w-full mt-1 border rounded-lg px-3 py-2.5 text-sm" placeholder="••••••••">
+            </div>
+            <div id="loginError" class="text-red-600 text-sm hidden"></div>
+            <button type="submit" class="w-full btn-primary py-2.5">Sign in</button>
+          </form>
+          <div class="mt-8 pt-5 border-t text-xs text-gray-500">
+            <p class="font-medium mb-2 text-gray-700">Demo accounts <span class="font-normal text-gray-400">(password: Password123!)</span></p>
+            <ul class="space-y-1">
+              <li class="flex justify-between"><span class="text-gray-400">SystemAdmin</span><span class="mono">ayesha.khan@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">HRAdmin</span><span class="mono">bilal.ahmed@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Manager</span><span class="mono">sara.malik@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Employee</span><span class="mono">usman.tariq@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Finance</span><span class="mono">zainab.iqbal@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Intern</span><span class="mono">ali.raza@agency.local</span></li>
+              <li class="flex justify-between"><span class="text-gray-400">Contractor</span><span class="mono">omar.farooq@agency.local</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errEl = document.getElementById('loginError');
+    errEl.classList.add('hidden');
+    try {
+      const data = await api('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+      state.token = data.token;
+      state.user = data.user;
+      localStorage.setItem('hrms_token', data.token);
+      await loadMe();
+      render();
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.classList.remove('hidden');
+    }
+  });
+}
+
+async function loadMe() {
+  const data = await api('/auth/me');
+  state.user = data.user;
+  state.employee = data.employee;
+}
+
+// ============ ICONS ============
+const ICONS = {
+  home: '<path d="M3 10.5 10 4l7 6.5"/><path d="M5 9v7a1 1 0 0 0 1 1h3v-4h2v4h3a1 1 0 0 0 1-1V9"/>',
+  clock: '<circle cx="10" cy="10" r="7.25"/><path d="M10 6v4l2.75 1.75"/>',
+  leaf: '<path d="M4.5 15.5C3 10 6 4.5 15.5 4.5c0 9.5-5.5 12.5-11 11Z"/><path d="M4.5 15.5 10 10"/>',
+  folder: '<path d="M3 5.5a1 1 0 0 1 1-1h3.8l1.4 1.6H16a1 1 0 0 1 1 1V15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5.5Z"/>',
+  cash: '<rect x="2.5" y="5.5" width="15" height="9" rx="1.5"/><circle cx="10" cy="10" r="2.25"/>',
+  desk: '<path d="M3 8.5h14M6 8.5V16M14 8.5V16M4.5 4l2.5 4.5M15.5 4 13 8.5"/>',
+  users: '<circle cx="7" cy="7.5" r="2.75"/><path d="M2.5 16c0-2.8 2-4.5 4.5-4.5S11.5 13.2 11.5 16"/><circle cx="14" cy="8" r="2.1"/><path d="M13 11.6c2.1.15 3.5 1.7 3.5 4.4"/>',
+  check: '<circle cx="10" cy="10" r="7.25"/><path d="M6.8 10.2 9 12.3l4.2-4.6"/>',
+  briefcase: '<rect x="2.5" y="6.5" width="15" height="9.5" rx="1.5"/><path d="M7 6.5V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1.5M2.5 10.5h15"/>',
+  target: '<circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="3.8"/><circle cx="10" cy="10" r="0.9" fill="currentColor" stroke="none"/>',
+  bank: '<path d="M3 8.5 10 3.5l7 5"/><path d="M4 8.5v6.5M8 8.5v6.5M12 8.5v6.5M16 8.5v6.5"/><path d="M3 16.5h14"/>',
+  chart: '<path d="M3.5 16V4M3.5 16h13M7 13.5v-4M10.5 13.5v-7M14 13.5v-2.5"/>',
+  gear: '<circle cx="10" cy="10" r="2.6"/><path d="M10 3.5v1.7M10 14.8v1.7M16.5 10h-1.7M5.2 10H3.5M14.6 5.4l-1.2 1.2M6.6 13.4l-1.2 1.2M14.6 14.6l-1.2-1.2M6.6 6.6 5.4 5.4"/>',
+  lock: '<rect x="4.5" y="9" width="11" height="7.5" rx="1.5"/><path d="M6.5 9V6.5a3.5 3.5 0 0 1 7 0V9"/>',
+  tasks: '<rect x="4" y="3" width="12" height="14" rx="2"/><path d="M7 3V2h6v1M7 7h6M7 10h6M7 13h4"/>',
+};
+function icon(name) {
+  return `<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;
+}
+
+// ============ TAB CONFIG BY ROLE ============
+function navGroupsForRole(role) {
+  const groups = [
+    { label: 'Overview', items: [
+      { id: 'dashboard', label: 'Dashboard', icon: 'home' },
+      { id: 'attendance', label: 'Attendance', icon: 'clock' },
+      { id: 'leave', label: 'Leave', icon: 'leaf' },
+      { id: 'projects', label: 'Projects', icon: 'folder' },
+      { id: 'tasks', label: 'Tasks', icon: 'tasks' },
+      { id: 'payslips', label: 'Payslips', icon: 'cash' },
+      { id: 'hrdesk', label: 'HR Desk', icon: 'desk' },
+    ]}
+  ];
+  const teamItems = [];
+  if (role === 'Manager') {
+    teamItems.push({ id: 'team', label: 'Team', icon: 'users' });
+    teamItems.push({ id: 'approvals', label: 'Approvals', icon: 'check' });
+    teamItems.push({ id: 'performance', label: 'Performance', icon: 'target' });
+  }
+  if (['HRAdmin', 'SystemAdmin'].includes(role)) {
+    teamItems.push({ id: 'employees', label: 'Employees', icon: 'users' });
+    teamItems.push({ id: 'recruitment', label: 'Recruitment', icon: 'briefcase' });
+    teamItems.push({ id: 'performance', label: 'Performance', icon: 'target' });
+    teamItems.push({ id: 'approvals', label: 'Approvals', icon: 'check' });
+  }
+  if (teamItems.length) groups.push({ label: 'Workforce', items: teamItems });
+
+  const financeItems = [];
+  if (['HRAdmin', 'SystemAdmin'].includes(role)) {
+    financeItems.push({ id: 'payroll', label: 'Payroll', icon: 'bank' });
+    financeItems.push({ id: 'reports', label: 'Reports', icon: 'chart' });
+  }
+  if (role === 'FinanceOfficer') {
+    financeItems.push({ id: 'finance', label: 'Compensation', icon: 'cash' });
+    financeItems.push({ id: 'reimbursements', label: 'Reimbursements', icon: 'bank' });
+  }
+  if (financeItems.length) groups.push({ label: 'Finance', items: financeItems });
+
+  const adminItems = [];
+  if (['HRAdmin', 'SystemAdmin'].includes(role)) adminItems.push({ id: 'settings', label: 'Settings', icon: 'gear' });
+  if (role === 'SystemAdmin') adminItems.push({ id: 'users', label: 'Users', icon: 'lock' });
+  if (adminItems.length) groups.push({ label: 'Administration', items: adminItems });
+
+  return groups;
+}
+
+function tabsForRole(role) {
+  return navGroupsForRole(role).flatMap(g => g.items);
+}
+
+// ============ SHELL ============
+function shell(contentHtml) {
+  const role = state.user.role;
+  const groups = navGroupsForRole(role);
+  const initials = (state.employee ? state.employee.full_name : state.user.email)
+    .split(/[\s.@]/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase();
+
+  const pageNames = {
+    dashboard:'Dashboard', attendance:'Attendance', leave:'Leave',
+    projects:'Projects', tasks:'Tasks', payslips:'Payslips', hrdesk:'HR Desk',
+    team:'Team Attendance', approvals:'Approvals', employees:'Employees',
+    recruitment:'Recruitment', performance:'Performance', payroll:'Payroll',
+    reports:'Reports', settings:'Settings', finance:'Compensation',
+    reimbursements:'Reimbursements', users:'User Management'
+  };
+  const pageName = pageNames[state.tab] || 'Workspace';
+  const displayName = state.employee ? state.employee.full_name : state.user.email;
+
+  return `
+    <div class="min-h-screen flex">
+      <aside class="sidebar w-60 shrink-0 hidden md:flex flex-col py-5 fixed h-screen overflow-y-auto z-20">
+        <div class="px-5 mb-7">
+          <div class="flex items-center gap-3">
+            <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2dd4bf,#0f766e);position:relative;flex-shrink:0;box-shadow:0 6px 18px rgba(20,184,166,.18);">
+              <div style="position:absolute;top:8px;left:8px;width:11px;height:11px;background:rgba(255,255,255,.92);border-radius:3px;"></div>
+              <div style="position:absolute;bottom:8px;right:8px;width:11px;height:11px;border:1.5px solid rgba(255,255,255,.9);border-radius:3px;"></div>
+            </div>
+            <div>
+              <div class="font-display text-white font-bold text-base leading-tight">Grafio</div>
+              <div class="text-[9px] font-semibold tracking-[.18em]" style="color:#64748b;">HR MANAGEMENT</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-3">
+          ${groups.map(g => `
+            <div class="nav-group-label">${g.label}</div>
+            ${g.items.map(t => `
+              <div onclick="switchTab('${t.id}')" class="nav-item ${state.tab === t.id ? 'active' : ''}">
+                ${icon(t.icon)}<span>${t.label}</span>
+              </div>
+            `).join('')}
+          `).join('')}
+        </div>
+
+        <div class="mt-auto px-4 pt-5">
+          <div class="rounded-xl p-3" style="background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);">
+            <div class="text-[10px] uppercase tracking-wider font-semibold" style="color:#64748b;">Signed in as</div>
+            <div class="text-xs text-white font-medium mt-1 truncate">${displayName}</div>
+            <div class="text-[10px] mt-0.5" style="color:#64748b;">${role}</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="flex-1 md:ml-60 min-w-0">
+        <header class="bg-white border-b sticky top-0 z-10">
+          <div class="px-4 md:px-8 py-3.5 flex items-center justify-between gap-4">
+            <div class="min-w-0">
+              <div class="md:hidden flex items-center gap-2 font-display font-bold text-base mb-0.5">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;"></span>
+                Grafio HRMS
+              </div>
+              <div class="hidden md:block text-[11px] font-semibold uppercase tracking-[.12em] text-slate-400">Workspace</div>
+              <div class="font-display font-semibold text-lg text-slate-800 truncate">${pageName}</div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div class="hidden sm:block text-right mr-1">
+                <div class="text-xs font-semibold text-slate-700">${displayName}</div>
+                <div class="text-[10px] text-slate-400">${role}</div>
+              </div>
+              <div style="width:36px;height:36px;border-radius:11px;background:var(--accent-soft);color:var(--accent-dark);border:1px solid #ccece6;" class="flex items-center justify-center text-xs font-bold font-display">${initials}</div>
+              <button onclick="logout()" class="btn-secondary text-xs px-3 py-2">Log out</button>
+            </div>
+          </div>
+
+          <nav class="md:hidden overflow-x-auto border-t">
+            <div class="flex gap-1.5 px-3 py-2">
+              ${tabsForRole(role).map(t => `
+                <button onclick="switchTab('${t.id}')" class="${state.tab === t.id ? 'btn-primary' : 'btn-secondary'} text-xs px-3 py-1.5 whitespace-nowrap">${t.label}</button>
+              `).join('')}
+            </div>
+          </nav>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 md:px-8 py-7">
+          ${contentHtml}
+        </main>
+      </div>
+    </div>
+  `;
+}
+
+function switchTab(tab) {
+  state.tab = tab;
+  render();
+}
+window.switchTab = switchTab;
+window.logout = logout;
+
+// ============ DASHBOARD ============
+async function dashboardView() {
+  const d = await api('/ess/dashboard');
+  const empType = state.employee ? state.employee.employment_type : '';
+  const firstName = state.employee ? state.employee.full_name.split(' ')[0] : '';
+  return `
+    <div class="mb-6">
+      <h2 class="font-display text-xl font-semibold">Welcome back${firstName ? ', ' + firstName : ''}</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Here's what's happening with your work today.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-4 mb-6">
+      <div class="stat-card">
+        <p class="stat-label">Employment Type</p>
+        <p class="stat-value" style="font-size:1.2rem;">${badge(empType, 'badge-' + empType)}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Pending Leave Requests</p>
+        <p class="stat-value">${d.pending_leave_requests}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Active Projects</p>
+        <p class="stat-value">${d.projects.length}</p>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5">
+        <h3>Recent Attendance</h3>
+        <table class="w-full text-sm">
+          <thead><tr class="text-left text-gray-500"><th class="pb-2">Date</th><th>In</th><th>Out</th><th>Hours</th></tr></thead>
+          <tbody>
+            ${d.attendance.map(a => `<tr class="border-t"><td class="py-1.5">${a.date}</td><td>${a.check_in || '-'}</td><td>${a.check_out || '-'}</td><td>${a.hours_worked || '-'}</td></tr>`).join('') || '<tr><td class="py-2 text-gray-400" colspan="4">No records yet</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">Leave Balances</h3>
+        <div class="space-y-2">
+          ${d.leaveBalances.map(b => `
+            <div class="flex justify-between items-center border-b pb-2">
+              <span class="text-sm">${b.leave_type}</span>
+              <span class="font-semibold">${b.balance} days</span>
+            </div>`).join('') || '<p class="text-gray-400 text-sm">No leave balance configured (e.g. Contractor)</p>'}
+        </div>
+        <h3 class="font-semibold mt-4 mb-2">My Projects</h3>
+        <div class="space-y-1">
+          ${d.projects.map(p => `<div class="text-sm bg-gray-50 rounded px-3 py-2">${p.name} <span class="text-gray-400">— ${p.role_on_project || 'Member'}</span></div>`).join('') || '<p class="text-gray-400 text-sm">Not assigned to any project yet</p>'}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ ATTENDANCE ============
+async function attendanceView() {
+  const history = await api('/attendance/me');
+  return `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Check In / Out</h3>
+      <div class="flex gap-3">
+        <button onclick="doCheck('check-in')" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700">Check In</button>
+        <button onclick="doCheck('check-out')" class="btn-secondary">Check Out</button>
+      </div>
+      <div id="checkMsg" class="mt-3 text-sm"></div>
+    </div>
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Request Attendance Correction</h3>
+      <form id="corrForm" class="grid sm:grid-cols-4 gap-2">
+        <input type="date" name="date" required class="border rounded-lg px-3 py-2 text-sm">
+        <input type="time" name="requested_check_in" class="border rounded-lg px-3 py-2 text-sm" placeholder="Check-in">
+        <input type="time" name="requested_check_out" class="border rounded-lg px-3 py-2 text-sm" placeholder="Check-out">
+        <input type="text" name="reason" placeholder="Reason" class="border rounded-lg px-3 py-2 text-sm">
+        <button class="sm:col-span-4 btn-primary py-2">Submit Request</button>
+      </form>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">My Attendance History</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Date</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Late(min)</th><th>Status</th></tr></thead>
+        <tbody>
+          ${history.map(a => `<tr class="border-t"><td class="py-1.5">${a.date}</td><td>${a.check_in || '-'}</td><td>${a.check_out || '-'}</td><td>${a.hours_worked || '-'}</td><td>${a.late_minutes}</td><td>${a.status}</td></tr>`).join('') || '<tr><td colspan="6" class="text-gray-400 py-2">No attendance records</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function doCheck(type) {
+  const msgEl = document.getElementById('checkMsg');
+  try {
+    await api('/attendance/' + type, { method: 'POST', body: JSON.stringify({}) });
+    msgEl.innerHTML = `<span class="text-green-600">✓ ${type.replace('-', ' ')} recorded successfully</span>`;
+    setTimeout(render, 800);
+  } catch (e) {
+    msgEl.innerHTML = `<span class="text-red-600">✗ ${e.message}</span>`;
+  }
+}
+window.doCheck = doCheck;
+
+function attachCorrectionForm() {
+  const f = document.getElementById('corrForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(f);
+    try {
+      await api('/attendance/corrections', { method: 'POST', body: JSON.stringify(Object.fromEntries(fd)) });
+      toast('Correction request submitted');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+// ============ LEAVE ============
+async function leaveView() {
+  const [requests, balances] = await Promise.all([
+    api('/leave/requests'),
+    state.employee ? api('/leave/balances') : Promise.resolve([])
+  ]);
+  const isContractor = state.employee && state.employee.employment_type === 'Contractor';
+  const canManage = ['Manager', 'HRAdmin', 'SystemAdmin'].includes(state.user.role);
+  return `
+    ${isContractor ? `<div class="card p-4 mb-4 bg-pink-50 text-pink-800 text-sm">Contractors are engaged on an invoice basis and are not eligible for standard leave.</div>` : `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Apply for Leave</h3>
+      <form id="leaveForm" class="grid sm:grid-cols-5 gap-2">
+        <select name="leave_type" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="Annual">Annual</option>
+          <option value="Sick">Sick</option>
+          <option value="Casual">Casual</option>
+          <option value="Flat">Flat (Intern)</option>
+        </select>
+        <input type="date" name="start_date" required class="border rounded-lg px-3 py-2 text-sm">
+        <input type="date" name="end_date" required class="border rounded-lg px-3 py-2 text-sm">
+        <input type="text" name="reason" placeholder="Reason" class="border rounded-lg px-3 py-2 text-sm sm:col-span-1">
+        <button class="btn-primary py-2">Apply</button>
+      </form>
+      <div class="flex gap-3 mt-3">
+        ${balances.map(b => `<div class="text-xs bg-gray-50 rounded-lg px-3 py-2">${b.leave_type}: <b>${b.balance}</b> days</div>`).join('')}
+      </div>
+    </div>`}
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">${canManage ? 'Leave Requests' : 'My Leave History'}</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          ${requests.map(r => `
+            <tr class="border-t">
+              <td class="py-1.5">${r.full_name || ''}</td><td>${r.leave_type}</td><td>${r.start_date} → ${r.end_date}</td><td>${r.days}</td><td>${badge(r.status, 'badge-' + r.status)}</td>
+              <td>${(r.employee_id == state.user.employee_id && r.status === 'Pending') ? `<button onclick="cancelLeaveRequest(${r.id})" class="text-xs text-red-600 hover:underline">Cancel</button>` : ''}</td>
+            </tr>`).join('') || '<tr><td colspan="6" class="text-gray-400 py-2">No leave requests</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function cancelLeaveRequest(id) {
+  confirmRun('Cancel this leave request?', () => api(`/leave/requests/${id}`, { method: 'DELETE' }));
+}
+window.cancelLeaveRequest = cancelLeaveRequest;
+
+function attachLeaveForm() {
+  const f = document.getElementById('leaveForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/leave/requests', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Leave request submitted');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+// ============ PROJECTS ============
+async function projectsView() {
+  const isManagerHR = ['HRAdmin', 'SystemAdmin', 'Manager'].includes(state.user.role);
+  const [projects, myAssignments, myTimeLogs, myReimbursements] = await Promise.all([
+    api('/projects'),
+    api('/projects/my-assignments'),
+    api('/projects/my-time-logs'),
+    api('/projects/my-reimbursements')
+  ]);
+  return `
+    <div class="card p-5 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-semibold">Log Time</h3>
+        ${isManagerHR ? `<button onclick="showNewProjectForm()" class="text-xs text-blue-600 hover:underline">+ New Project</button>` : ''}
+      </div>
+      <div id="newProjectForm" class="hidden mb-4 border rounded-lg p-4 bg-gray-50">
+        <form id="projForm" class="grid sm:grid-cols-3 gap-2">
+          <input name="name" placeholder="Project name" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-2">
+          <input name="donor" placeholder="Donor (optional)" class="border rounded-lg px-3 py-2 text-sm">
+          <input name="location" placeholder="Location" class="border rounded-lg px-3 py-2 text-sm">
+          <input name="start_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
+          <input name="end_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
+          <button class="sm:col-span-3 btn-primary py-2">Create Project</button>
+        </form>
+      </div>
+      <form id="timeLogForm" class="grid sm:grid-cols-5 gap-2">
+        <select name="project_id" class="border rounded-lg px-3 py-2 text-sm sm:col-span-2">
+          ${projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+        <input type="date" name="date" required class="border rounded-lg px-3 py-2 text-sm">
+        <input type="number" step="0.5" name="hours" placeholder="Hours" required class="border rounded-lg px-3 py-2 text-sm">
+        <select name="billable" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="true">Billable</option>
+          <option value="false">Non-billable</option>
+        </select>
+        <button class="sm:col-span-5 btn-primary py-2">Log Hours</button>
+      </form>
+    </div>
+
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">My Time Log Entries</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Date</th><th>Project</th><th>Hours</th><th>Type</th><th></th></tr></thead>
+        <tbody>
+          ${myTimeLogs.map(l => `
+            <tr class="border-t">
+              <td class="py-1.5">${l.date}</td><td>${l.project_name}</td><td>${l.hours}</td><td>${l.billable ? 'Billable' : 'Non-billable'}</td>
+              <td><button onclick="deleteTimeLog(${l.id})" class="text-xs text-red-600 hover:underline">Delete</button></td>
+            </tr>`).join('') || '<tr><td colspan="5" class="text-gray-400 py-2">No entries yet</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Reimbursement Claims</h3>
+      <form id="reimbForm" class="grid sm:grid-cols-4 gap-2 mb-3">
+        <select name="project_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">No project</option>
+          ${projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+        <input type="number" step="0.01" name="amount" placeholder="Amount" required class="border rounded-lg px-3 py-2 text-sm">
+        <input type="text" name="description" placeholder="Description" class="border rounded-lg px-3 py-2 text-sm">
+        <button class="btn-primary py-2">Submit Claim</button>
+      </form>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Project</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          ${myReimbursements.map(r => `
+            <tr class="border-t">
+              <td class="py-1.5">${r.project_name || '-'}</td><td>${r.amount}</td><td>${badge(r.status, 'badge-' + r.status)}</td>
+              <td>${r.status === 'Pending' ? `<button onclick="deleteReimbursement(${r.id})" class="text-xs text-red-600 hover:underline">Cancel</button>` : ''}</td>
+            </tr>`).join('') || '<tr><td colspan="4" class="text-gray-400 py-2">No claims yet</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">My Assignments</h3>
+        ${myAssignments.map(a => `<div class="border-b py-2 text-sm"><b>${a.project_name}</b><br><span class="text-gray-500">${a.role_on_project || ''} ${a.donor ? '· Donor: ' + a.donor : ''}</span></div>`).join('') || '<p class="text-gray-400 text-sm">No assignments</p>'}
+      </div>
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">All Projects</h3>
+        ${projects.map(p => `
+          <div class="border-b py-2 text-sm flex justify-between items-start">
+            <div>
+              <b>${p.name}</b> <span class="text-gray-400">(${p.status})</span><br>
+              <span class="text-gray-500">${p.client_name || ''} ${p.location ? '· ' + p.location : ''}</span>
+            </div>
+            ${isManagerHR ? `
+              <div class="flex gap-2 shrink-0 ml-2">
+                <button onclick="assignToProject(${p.id})" class="text-xs text-blue-600 hover:underline">Assign</button>
+                <button onclick="deleteProject(${p.id})" class="text-xs text-red-600 hover:underline">Delete</button>
+              </div>` : ''}
+          </div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function showNewProjectForm() {
+  document.getElementById('newProjectForm').classList.toggle('hidden');
+}
+window.showNewProjectForm = showNewProjectForm;
+
+function deleteTimeLog(id) {
+  confirmRun('Delete this time entry?', () => api(`/projects/time-logs/${id}`, { method: 'DELETE' }));
+}
+function deleteReimbursement(id) {
+  confirmRun('Cancel this reimbursement claim?', () => api(`/projects/reimbursements/${id}`, { method: 'DELETE' }));
+}
+function deleteProject(id) {
+  confirmRun('Delete this project? This also removes its assignments and time logs.', () => api(`/projects/${id}`, { method: 'DELETE' }));
+}
+window.deleteTimeLog = deleteTimeLog;
+window.deleteReimbursement = deleteReimbursement;
+window.deleteProject = deleteProject;
+
+async function assignToProject(projectId) {
+  const employees = await api('/employees');
+  openModal('Assign to Project', `
+    <form id="assignForm" class="space-y-3">
+      <select name="employee_id" required class="w-full border rounded-lg px-3 py-2 text-sm">
+        ${employees.map(e => `<option value="${e.id}">${e.full_name} (${e.employment_type})</option>`).join('')}
+      </select>
+      <input name="role_on_project" placeholder="Role on project" class="w-full border rounded-lg px-3 py-2 text-sm">
+      <button class="w-full btn-primary py-2">Assign</button>
+    </form>
+  `);
+  document.getElementById('assignForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(e.target));
+    try {
+      await api(`/projects/${projectId}/assignments`, { method: 'POST', body: JSON.stringify(fd) });
+      closeModal();
+      toast('Assigned');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+window.assignToProject = assignToProject;
+
+function attachTimeLogForm() {
+  const f = document.getElementById('timeLogForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    const projectId = fd.project_id;
+    delete fd.project_id;
+    fd.billable = fd.billable === 'true';
+    fd.hours = parseFloat(fd.hours);
+    try {
+      await api(`/projects/${projectId}/time-logs`, { method: 'POST', body: JSON.stringify(fd) });
+      toast('Time logged');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+function attachReimbForm() {
+  const f = document.getElementById('reimbForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    if (!fd.project_id) delete fd.project_id;
+    fd.amount = parseFloat(fd.amount);
+    try {
+      await api('/projects/reimbursements', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Claim submitted');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+function attachProjForm() {
+  const f = document.getElementById('projForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/projects', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Project created');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+
+// ============ TASKS ============
+function taskStatusBadge(status) {
+  const map = {
+    Pending: 'bg-amber-50 text-amber-700 border border-amber-100',
+    InProgress: 'bg-blue-50 text-blue-700 border border-blue-100',
+    Completed: 'bg-green-50 text-green-700 border border-green-100'
+  };
+  return badge(status === 'InProgress' ? 'In Progress' : status, map[status] || 'bg-gray-100 text-gray-700');
+}
+
+function taskDueLabel(date) {
+  if (!date) return '<span class="text-gray-400">No due date</span>';
+  const d = new Date(date + 'T00:00:00');
+  if (Number.isNaN(d.getTime())) return esc(date);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((d - today) / 86400000);
+  const label = d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+  if (diff < 0) return `<span class="text-red-600 font-medium">Overdue · ${label}</span>`;
+  if (diff === 0) return `<span class="text-red-600 font-medium">Due today</span>`;
+  if (diff === 1) return `<span class="text-amber-600 font-medium">Due tomorrow</span>`;
+  return `<span class="text-gray-500">Due ${label}</span>`;
+}
+
+async function tasksView() {
+  const isManagerHR = ['Manager', 'HRAdmin', 'SystemAdmin'].includes(state.user.role);
+  const [tasks, employees, summary] = await Promise.all([
+    api('/tasks'),
+    isManagerHR ? api('/employees') : Promise.resolve([]),
+    isManagerHR ? api('/tasks/summary') : Promise.resolve([])
+  ]);
+
+  const completed = tasks.filter(t => t.status === 'Completed').length;
+  const open = tasks.length - completed;
+  const overdue = tasks.filter(t => t.due_date && t.status !== 'Completed' && new Date(t.due_date + 'T00:00:00') < new Date(new Date().toDateString())).length;
+
+  return `
+    <div class="space-y-5">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Work management</p>
+          <h2 class="font-display text-2xl font-semibold mt-1">${isManagerHR ? 'Tasks & assignments' : 'My tasks'}</h2>
+          <p class="text-sm text-gray-500 mt-1">${isManagerHR ? 'Assign work, monitor progress, and keep team delivery visible.' : 'Keep track of your assigned work and update progress as you go.'}</p>
+        </div>
+        <div class="flex gap-2">
+          <div class="px-3 py-2 rounded-xl bg-gray-50 border text-xs"><span class="text-gray-400">Total</span> <b class="ml-1">${tasks.length}</b></div>
+          <div class="px-3 py-2 rounded-xl bg-green-50 border border-green-100 text-xs"><span class="text-green-600">Done</span> <b class="ml-1 text-green-700">${completed}</b></div>
+          <div class="px-3 py-2 rounded-xl bg-amber-50 border border-amber-100 text-xs"><span class="text-amber-600">Open</span> <b class="ml-1 text-amber-700">${open}</b></div>
+          ${overdue ? `<div class="px-3 py-2 rounded-xl bg-red-50 border border-red-100 text-xs"><span class="text-red-600">Overdue</span> <b class="ml-1 text-red-700">${overdue}</b></div>` : ''}
+        </div>
+      </div>
+
+      ${isManagerHR ? `
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-semibold">Assign a task</h3>
+            <p class="text-xs text-gray-400 mt-0.5">Create an assignment for an employee and optionally set a due date.</p>
+          </div>
+          <span class="text-xs px-2 py-1 rounded-full bg-red-50 text-red-700">Manager / HR</span>
+        </div>
+        <form id="taskForm" class="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div class="md:col-span-4">
+            <label class="field-label">Employee</label>
+            <select name="employee_id" required class="w-full border rounded-xl px-3 py-2.5 text-sm bg-white">
+              <option value="">Select employee</option>
+              ${employees.map(e => `<option value="${e.id}">${esc(e.full_name)}${e.employment_type ? ` · ${esc(e.employment_type)}` : ''}</option>`).join('')}
+            </select>
+          </div>
+          <div class="md:col-span-5">
+            <label class="field-label">Task title</label>
+            <input name="title" required placeholder="e.g. Prepare monthly client report" class="w-full border rounded-xl px-3 py-2.5 text-sm">
+          </div>
+          <div class="md:col-span-3">
+            <label class="field-label">Due date</label>
+            <input name="due_date" type="date" class="w-full border rounded-xl px-3 py-2.5 text-sm">
+          </div>
+          <div class="md:col-span-12">
+            <label class="field-label">Details <span class="font-normal text-gray-400">(optional)</span></label>
+            <textarea name="description" rows="2" placeholder="Add context, expected output, or useful instructions..." class="w-full border rounded-xl px-3 py-2.5 text-sm resize-y"></textarea>
+          </div>
+          <div class="md:col-span-12 flex justify-end">
+            <button class="btn-primary px-5 py-2.5 rounded-xl text-sm font-medium">Assign Task</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card overflow-hidden">
+        <div class="px-5 py-4 border-b flex items-center justify-between">
+          <div>
+            <h3 class="font-semibold">Tasks completed per employee</h3>
+            <p class="text-xs text-gray-400 mt-0.5">A quick delivery snapshot based on assigned tasks.</p>
+          </div>
+          <span class="text-xs text-gray-400">${summary.length} employee${summary.length === 1 ? '' : 's'}</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+              <tr><th class="px-5 py-3 text-left font-medium">Employee</th><th class="px-5 py-3 text-right font-medium">Completed</th><th class="px-5 py-3 text-right font-medium">Open</th><th class="px-5 py-3 text-right font-medium">Total</th></tr>
+            </thead>
+            <tbody>
+              ${summary.map(s => `
+                <tr class="border-t hover:bg-gray-50/70">
+                  <td class="px-5 py-3 font-medium">${esc(s.full_name)}</td>
+                  <td class="px-5 py-3 text-right text-green-700 font-semibold">${s.completed_tasks || 0}</td>
+                  <td class="px-5 py-3 text-right text-amber-700">${s.open_tasks || 0}</td>
+                  <td class="px-5 py-3 text-right text-gray-600">${s.total_tasks || 0}</td>
+                </tr>`).join('') || '<tr><td colspan="4" class="px-5 py-8 text-center text-gray-400">No assigned tasks yet.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>` : ''}
+
+      <div class="card overflow-hidden">
+        <div class="px-5 py-4 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h3 class="font-semibold">${isManagerHR ? 'All tasks' : 'My tasks'}</h3>
+            <p class="text-xs text-gray-400 mt-0.5">Update task status directly from the list.</p>
+          </div>
+          <div class="text-xs text-gray-400">${tasks.length} task${tasks.length === 1 ? '' : 's'}</div>
+        </div>
+        <div class="divide-y">
+          ${tasks.map(t => `
+            <div class="px-5 py-4 hover:bg-gray-50/60 transition">
+              <div class="flex flex-col lg:flex-row lg:items-center gap-4 justify-between">
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <p class="font-medium text-gray-900">${esc(t.title)}</p>
+                    ${taskStatusBadge(t.status)}
+                  </div>
+                  ${t.description ? `<p class="text-sm text-gray-500 mt-1.5 whitespace-pre-line">${esc(t.description)}</p>` : ''}
+                  <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs">
+                    ${isManagerHR ? `<span class="text-gray-500">For <b class="text-gray-700">${esc(t.employee_name)}</b></span>` : ''}
+                    ${t.assigned_by_name ? `<span class="text-gray-400">Assigned by ${esc(t.assigned_by_name)}</span>` : ''}
+                    <span>${taskDueLabel(t.due_date)}</span>
+                  </div>
+                </div>
+                <div class="shrink-0 flex items-center gap-2">
+                  <label class="sr-only" for="task-status-${t.id}">Status</label>
+                  <select id="task-status-${t.id}" onchange="updateTaskStatus(${t.id}, this.value)" class="border rounded-xl px-3 py-2 text-sm bg-white min-w-[130px]">
+                    ${['Pending', 'InProgress', 'Completed'].map(s => `<option value="${s}" ${t.status === s ? 'selected' : ''}>${s === 'InProgress' ? 'In Progress' : s}</option>`).join('')}
+                  </select>
+                  ${isManagerHR ? `<button onclick="deleteTask(${t.id})" class="px-3 py-2 text-sm text-red-600 border border-red-100 rounded-xl hover:bg-red-50">Delete</button>` : ''}
+                </div>
+              </div>
+            </div>`).join('') || `
+              <div class="px-5 py-12 text-center">
+                <div class="mx-auto w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mb-3">${icon('tasks')}</div>
+                <p class="text-sm font-medium text-gray-600">No tasks yet</p>
+                <p class="text-xs text-gray-400 mt-1">Assigned work will appear here.</p>
+              </div>`}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function updateTaskStatus(id, status) {
+  try {
+    await api(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ status }) });
+    toast('Task status updated');
+    render();
+  } catch (e) {
+    toast(e.message, true);
+    render();
+  }
+}
+window.updateTaskStatus = updateTaskStatus;
+
+function deleteTask(id) {
+  confirmRun('Delete this task? This action cannot be undone.', () => api(`/tasks/${id}`, { method: 'DELETE' }));
+}
+window.deleteTask = deleteTask;
+
+function attachTaskForm() {
+  const f = document.getElementById('taskForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/tasks', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Task assigned');
+      render();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+}
+
+// ============ PAYSLIPS ============
+async function payslipsView() {
+  const slips = await api('/payroll/my-payslips');
+  return `
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">My Payslips</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Period</th><th>Pay Type</th><th>Gross</th><th>Deductions</th><th>Net</th><th>Status</th></tr></thead>
+        <tbody>
+          ${slips.map(s => `<tr class="border-t"><td class="py-1.5">${s.period_month}/${s.period_year}</td><td>${s.pay_type}</td><td>${s.basic_amount}</td><td>${s.deductions}</td><td class="font-semibold">${s.net_amount}</td><td>${s.run_status}</td></tr>`).join('') || '<tr><td colspan="6" class="text-gray-400 py-2">No payslips yet</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============ HR DESK (Tickets + Announcements + Policies) ============
+async function hrdeskView() {
+  const isHR = ['HRAdmin', 'SystemAdmin'].includes(state.user.role);
+  const [tickets, announcements, policies] = await Promise.all([
+    api('/ess/tickets'),
+    api('/ess/announcements'),
+    api('/ess/policies')
+  ]);
+  return `
+    <div class="grid md:grid-cols-2 gap-4 mb-4">
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">📢 Announcements</h3>
+        ${isHR ? `
+        <form id="annForm" class="space-y-2 mb-3">
+          <input name="title" placeholder="Title" required class="w-full border rounded-lg px-3 py-2 text-sm">
+          <textarea name="content" placeholder="Content" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+          <button class="btn-primary text-sm">Post</button>
+        </form>` : ''}
+        <div class="space-y-2 max-h-72 overflow-y-auto">
+          ${announcements.map(a => `
+            <div class="border-b pb-2">
+              <div class="flex justify-between items-start">
+                <b class="text-sm">${a.title}</b>
+                ${isHR ? `<button onclick="deleteAnnouncement(${a.id})" class="text-xs text-red-600 hover:underline">Delete</button>` : ''}
+              </div>
+              <p class="text-xs text-gray-500 mt-1">${a.content || ''}</p>
+            </div>`).join('') || '<p class="text-gray-400 text-sm">No announcements</p>'}
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">📄 Policies / Handbook</h3>
+        ${isHR ? `
+        <form id="policyForm" class="space-y-2 mb-3">
+          <input name="title" placeholder="Policy title" required class="w-full border rounded-lg px-3 py-2 text-sm">
+          <textarea name="content" placeholder="Content" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+          <button class="btn-primary text-sm">Add Policy</button>
+        </form>` : ''}
+        <div class="space-y-2 max-h-72 overflow-y-auto">
+          ${policies.map(p => `
+            <div class="border-b pb-2">
+              <div class="flex justify-between items-start">
+                <b class="text-sm">${p.title}</b>
+                ${isHR ? `<button onclick="deletePolicy(${p.id})" class="text-xs text-red-600 hover:underline">Delete</button>` : ''}
+              </div>
+              <p class="text-xs text-gray-500 mt-1">${p.content || ''}</p>
+            </div>`).join('') || '<p class="text-gray-400 text-sm">No policies published</p>'}
+        </div>
+      </div>
+    </div>
+    ${!isHR ? `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Raise a Ticket</h3>
+      <form id="ticketForm" class="grid sm:grid-cols-3 gap-2">
+        <input type="text" name="subject" placeholder="Subject" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-1">
+        <input type="text" name="description" placeholder="Description" class="border rounded-lg px-3 py-2 text-sm sm:col-span-1">
+        <button class="btn-primary py-2">Submit</button>
+      </form>
+    </div>` : ''}
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">${isHR ? 'All Tickets' : 'My Tickets'}</h3>
+      <div class="space-y-2">
+        ${tickets.map(t => `
+          <div class="border rounded-lg p-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-medium">${t.subject} ${isHR ? '<span class="text-gray-400 text-xs">— ' + t.full_name + '</span>' : ''}</p>
+                <p class="text-sm text-gray-500">${t.description || ''}</p>
+              </div>
+              ${badge(t.status, t.status === 'Resolved' || t.status === 'Closed' ? 'badge-Approved' : 'badge-Pending')}
+            </div>
+            <div class="flex gap-2 mt-2">
+              ${isHR && t.status !== 'Resolved' ? `<button onclick="resolveTicket(${t.id})" class="text-xs text-blue-600 hover:underline">Mark Resolved</button>` : ''}
+              ${(t.employee_id == state.user.employee_id && t.status === 'Open') || isHR ? `<button onclick="deleteTicket(${t.id})" class="text-xs text-red-600 hover:underline">Delete</button>` : ''}
+            </div>
+          </div>
+        `).join('') || '<p class="text-gray-400 text-sm">No tickets</p>'}
+      </div>
+    </div>
+  `;
+}
+
+async function resolveTicket(id) {
+  try {
+    await api(`/ess/tickets/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'Resolved', resolution: 'Resolved via HR portal' }) });
+    render();
+  } catch (e) { toast(e.message, true); }
+}
+function deleteTicket(id) {
+  confirmRun('Delete this ticket?', () => api(`/ess/tickets/${id}`, { method: 'DELETE' }));
+}
+function deleteAnnouncement(id) {
+  confirmRun('Delete this announcement?', () => api(`/ess/announcements/${id}`, { method: 'DELETE' }));
+}
+function deletePolicy(id) {
+  confirmRun('Delete this policy?', () => api(`/ess/policies/${id}`, { method: 'DELETE' }));
+}
+window.resolveTicket = resolveTicket;
+window.deleteTicket = deleteTicket;
+window.deleteAnnouncement = deleteAnnouncement;
+window.deletePolicy = deletePolicy;
+
+function attachTicketForm() {
+  const f = document.getElementById('ticketForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/ess/tickets', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Ticket submitted');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+function attachAnnForm() {
+  const f = document.getElementById('annForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/ess/announcements', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Posted');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+function attachPolicyForm() {
+  const f = document.getElementById('policyForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/ess/policies', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Policy added');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+// ============ TEAM (Manager) ============
+async function teamView() {
+  const attendance = await api('/attendance/team');
+  return `
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Team Attendance</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Employee</th><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Status</th></tr></thead>
+        <tbody>
+          ${attendance.map(a => `<tr class="border-t"><td class="py-1.5">${a.full_name}</td><td>${a.date}</td><td>${a.check_in || '-'}</td><td>${a.check_out || '-'}</td><td>${a.hours_worked || '-'}</td><td>${a.status}</td></tr>`).join('') || '<tr><td colspan="6" class="text-gray-400 py-2">No records</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============ APPROVALS (Manager / HR) ============
+async function approvalsView() {
+  const [leaveReqs, corrections] = await Promise.all([
+    api('/leave/requests'),
+    api('/attendance/corrections')
+  ]);
+  const pendingLeave = leaveReqs.filter(r => r.status === 'Pending');
+  const pendingCorr = corrections.filter(c => c.status === 'Pending');
+  return `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Pending Leave Requests</h3>
+      <div class="space-y-2">
+        ${pendingLeave.map(r => `
+          <div class="border rounded-lg p-3 flex justify-between items-center">
+            <div>
+              <p class="font-medium">${r.full_name} <span class="text-gray-400 text-xs">(${r.employment_type})</span></p>
+              <p class="text-sm text-gray-500">${r.leave_type} · ${r.start_date} → ${r.end_date} · ${r.days} day(s)</p>
+              ${r.reason ? `<p class="text-xs text-gray-400">Reason: ${r.reason}</p>` : ''}
+            </div>
+            <div class="flex gap-2">
+              <button onclick="reviewLeave(${r.id},'Approved')" class="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg">Approve</button>
+              <button onclick="reviewLeave(${r.id},'Rejected')" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg">Reject</button>
+            </div>
+          </div>
+        `).join('') || '<p class="text-gray-400 text-sm">No pending requests</p>'}
+      </div>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Pending Attendance Corrections</h3>
+      <div class="space-y-2">
+        ${pendingCorr.map(c => `
+          <div class="border rounded-lg p-3 flex justify-between items-center">
+            <div>
+              <p class="font-medium">${c.full_name}</p>
+              <p class="text-sm text-gray-500">${c.date} — In: ${c.requested_check_in || '-'} Out: ${c.requested_check_out || '-'}</p>
+              ${c.reason ? `<p class="text-xs text-gray-400">Reason: ${c.reason}</p>` : ''}
+            </div>
+            <div class="flex gap-2">
+              <button onclick="reviewCorrection(${c.id},'Approved')" class="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg">Approve</button>
+              <button onclick="reviewCorrection(${c.id},'Rejected')" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg">Reject</button>
+            </div>
+          </div>
+        `).join('') || '<p class="text-gray-400 text-sm">No pending corrections</p>'}
+      </div>
+    </div>
+  `;
+}
+
+async function reviewLeave(id, status) {
+  try { await api(`/leave/requests/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+async function reviewCorrection(id, status) {
+  try { await api(`/attendance/corrections/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+window.reviewLeave = reviewLeave;
+window.reviewCorrection = reviewCorrection;
+
+// ============ EMPLOYEES (HR Admin) ============
+async function employeesView() {
+  const employees = await api('/employees');
+  const expiring = await api('/employees/interns/expiring?days=30').catch(() => []);
+  const isSystemAdmin = state.user.role === 'SystemAdmin';
+  return `
+    ${expiring.length ? `
+    <div class="card p-4 mb-4 bg-yellow-50 text-yellow-800 text-sm">
+      <b>⚠ ${expiring.length} internship(s) expiring within 30 days:</b>
+      ${expiring.map(e => ` ${e.full_name} (${e.days_remaining}d)`).join(',')}
+    </div>` : ''}
+    <div class="card p-5 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-semibold">All Employees (${employees.length})</h3>
+        <button onclick="openEmployeeForm()" class="btn-primary text-sm px-3 py-1.5 rounded-lg">+ Add Employee</button>
+      </div>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Name</th><th>Type</th><th>Department</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          ${employees.map(e => `
+            <tr class="border-t">
+              <td class="py-1.5">${e.full_name}</td>
+              <td>${badge(e.employment_type, 'badge-' + e.employment_type)}</td>
+              <td>${e.department_name || '-'}</td>
+              <td>${badge(e.status, 'badge-' + e.status)}</td>
+              <td class="whitespace-nowrap">
+                <button onclick='openEmployeeForm(${JSON.stringify(e).replace(/'/g, "&apos;")})' class="text-xs text-blue-600 hover:underline">Edit</button>
+                ${e.employment_type === 'Intern' && e.status === 'Active' ? ` <button onclick="convertIntern(${e.id})" class="text-xs text-purple-600 hover:underline ml-2">Convert to FT</button>` : ''}
+                ${e.status === 'Active' ? ` <button onclick="offboardEmployee(${e.id})" class="text-xs text-orange-600 hover:underline ml-2">Offboard</button>` : ''}
+                ${isSystemAdmin ? ` <button onclick="deleteEmployee(${e.id})" class="text-xs text-red-600 hover:underline ml-2">Delete</button>` : ''}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function openEmployeeForm(employee) {
+  const [depts, desigs, locs, allEmployees] = await Promise.all([
+    api('/admin/departments'), api('/admin/designations'), api('/admin/locations'), api('/employees')
+  ]);
+  const e = employee || {};
+  const isEdit = !!e.id;
+  const opt = (list, field, labelField, selected) => list.map(x =>
+    `<option value="${x.id}" ${x.id === selected ? 'selected' : ''}>${x[labelField]}</option>`).join('');
+
+  openModal(isEdit ? `Edit ${e.full_name}` : 'Add Employee', `
+    <form id="empModalForm" class="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
+      <div class="grid grid-cols-2 gap-2">
+        <input name="full_name" placeholder="Full name" value="${esc(e.full_name)}" required class="border rounded-lg px-3 py-2 text-sm col-span-2">
+        <input name="email" type="email" placeholder="Email" value="${esc(e.email)}" required class="border rounded-lg px-3 py-2 text-sm col-span-2">
+        <input name="phone" placeholder="Phone" value="${esc(e.phone)}" class="border rounded-lg px-3 py-2 text-sm">
+        <input name="hire_date" type="date" value="${e.hire_date ? e.hire_date.slice(0,10) : ''}" class="border rounded-lg px-3 py-2 text-sm">
+        <select name="employment_type" class="border rounded-lg px-3 py-2 text-sm col-span-2">
+          ${['Full-time','Part-time','Contractor','Intern'].map(t => `<option value="${t}" ${e.employment_type===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+        <select name="department_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">Department</option>${opt(depts, 'department_id', 'name', e.department_id)}
+        </select>
+        <select name="designation_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">Designation</option>${opt(desigs, 'designation_id', 'title', e.designation_id)}
+        </select>
+        <select name="location_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">Location</option>${opt(locs, 'location_id', 'name', e.location_id)}
+        </select>
+        <select name="manager_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">Manager</option>${allEmployees.filter(x=>x.id!==e.id).map(x=>`<option value="${x.id}" ${x.id===e.manager_id?'selected':''}>${x.full_name}</option>`).join('')}
+        </select>
+        <input name="address" placeholder="Address" value="${esc(e.address)}" class="border rounded-lg px-3 py-2 text-sm col-span-2">
+        <input name="emergency_contact" placeholder="Emergency contact" value="${esc(e.emergency_contact)}" class="border rounded-lg px-3 py-2 text-sm col-span-2">
+        <input name="bank_details" placeholder="Bank details" value="${esc(e.bank_details)}" class="border rounded-lg px-3 py-2 text-sm col-span-2">
+      </div>
+      <details class="border rounded-lg p-2">
+        <summary class="text-sm font-medium cursor-pointer">Intern-specific fields</summary>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <input name="internship_start_date" type="date" value="${e.internship_start_date ? e.internship_start_date.slice(0,10) : ''}" class="border rounded-lg px-3 py-2 text-sm" placeholder="Internship start">
+          <input name="internship_end_date" type="date" value="${e.internship_end_date ? e.internship_end_date.slice(0,10) : ''}" class="border rounded-lg px-3 py-2 text-sm" placeholder="Internship end">
+          <select name="mentor_id" class="border rounded-lg px-3 py-2 text-sm col-span-2">
+            <option value="">Mentor</option>${allEmployees.filter(x=>x.id!==e.id).map(x=>`<option value="${x.id}" ${x.id===e.mentor_id?'selected':''}>${x.full_name}</option>`).join('')}
+          </select>
+          <input name="university" placeholder="University" value="${esc(e.university)}" class="border rounded-lg px-3 py-2 text-sm col-span-2">
+          <input name="course_program" placeholder="Course/Program" value="${esc(e.course_program)}" class="border rounded-lg px-3 py-2 text-sm">
+          <input name="institution_supervisor" placeholder="Institution supervisor" value="${esc(e.institution_supervisor)}" class="border rounded-lg px-3 py-2 text-sm">
+        </div>
+      </details>
+      <details class="border rounded-lg p-2">
+        <summary class="text-sm font-medium cursor-pointer">Contractor-specific fields</summary>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <input name="contract_start_date" type="date" value="${e.contract_start_date ? e.contract_start_date.slice(0,10) : ''}" class="border rounded-lg px-3 py-2 text-sm">
+          <input name="contract_end_date" type="date" value="${e.contract_end_date ? e.contract_end_date.slice(0,10) : ''}" class="border rounded-lg px-3 py-2 text-sm">
+          <input name="engagement_scope" placeholder="Engagement scope" value="${esc(e.engagement_scope)}" class="border rounded-lg px-3 py-2 text-sm col-span-2">
+        </div>
+      </details>
+      <button class="w-full btn-primary py-2">${isEdit ? 'Save Changes' : 'Create Employee'}</button>
+    </form>
+  `);
+
+  document.getElementById('empModalForm').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const fd = Object.fromEntries(new FormData(ev.target));
+    Object.keys(fd).forEach(k => { if (fd[k] === '') delete fd[k]; });
+    try {
+      if (isEdit) {
+        await api(`/employees/${e.id}`, { method: 'PUT', body: JSON.stringify(fd) });
+      } else {
+        await api('/employees', { method: 'POST', body: JSON.stringify(fd) });
+      }
+      closeModal();
+      toast(isEdit ? 'Employee updated' : 'Employee created');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+window.openEmployeeForm = openEmployeeForm;
+
+async function convertIntern(id) {
+  const salary = prompt('Enter starting basic salary for full-time conversion:');
+  if (salary === null) return;
+  try {
+    await api(`/employees/${id}/convert-to-fulltime`, { method: 'POST', body: JSON.stringify({ basic_salary: parseFloat(salary) || 0 }) });
+    toast('Converted to Full-time');
+    render();
+  } catch (e) { toast(e.message, true); }
+}
+function offboardEmployee(id) {
+  confirmRun('Offboard this employee? Their record is kept but marked inactive.', () => api(`/employees/${id}/offboard`, { method: 'POST', body: JSON.stringify({}) }));
+}
+function deleteEmployee(id) {
+  confirmRun('Permanently delete this employee and ALL their records (attendance, leave, payroll history, etc.)? This cannot be undone.',
+    () => api(`/employees/${id}`, { method: 'DELETE' }));
+}
+window.convertIntern = convertIntern;
+window.offboardEmployee = offboardEmployee;
+window.deleteEmployee = deleteEmployee;
+
+// ============ RECRUITMENT (HR Admin) ============
+async function recruitmentView() {
+  const requisitions = await api('/recruitment/requisitions');
+  const depts = await api('/admin/departments');
+  const withCandidates = await Promise.all(requisitions.map(async r => ({
+    ...r, candidates: await api(`/recruitment/requisitions/${r.id}/candidates`)
+  })));
+  return `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">New Job Requisition</h3>
+      <form id="reqForm" class="grid sm:grid-cols-4 gap-2">
+        <input name="title" placeholder="Job title" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-2">
+        <select name="department_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">Department</option>
+          ${depts.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}
+        </select>
+        <button class="btn-primary py-2">Create</button>
+        <input name="description" placeholder="Description" class="border rounded-lg px-3 py-2 text-sm sm:col-span-4">
+      </form>
+    </div>
+    <div class="space-y-4">
+      ${withCandidates.map(r => `
+        <div class="card p-5">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <h4 class="font-semibold">${r.title} ${badge(r.status, r.status==='Open'?'badge-Approved':'badge-Offboarded')}</h4>
+              <p class="text-xs text-gray-500">${r.department_name || 'No department'}</p>
+            </div>
+            <div class="flex gap-2">
+              <select onchange="updateRequisitionStatus(${r.id}, this.value)" class="text-xs border rounded-lg px-2 py-1">
+                <option value="">Change status</option>
+                <option value="Open" ${r.status==='Open'?'selected':''}>Open</option>
+                <option value="On-hold" ${r.status==='On-hold'?'selected':''}>On-hold</option>
+                <option value="Closed" ${r.status==='Closed'?'selected':''}>Closed</option>
+              </select>
+              <button onclick="deleteRequisition(${r.id})" class="text-xs text-red-600 hover:underline">Delete</button>
+            </div>
+          </div>
+          <form onsubmit="addCandidate(event, ${r.id})" class="flex gap-2 mb-3">
+            <input name="full_name" placeholder="Candidate name" required class="border rounded-lg px-2 py-1 text-xs flex-1">
+            <input name="email" placeholder="Email" class="border rounded-lg px-2 py-1 text-xs flex-1">
+            <button class="btn-primary text-xs px-3 py-1">Add</button>
+          </form>
+          <table class="w-full text-xs">
+            <thead><tr class="text-left text-gray-500"><th class="pb-1">Name</th><th>Stage</th><th></th></tr></thead>
+            <tbody>
+              ${r.candidates.map(c => `
+                <tr class="border-t">
+                  <td class="py-1">${c.full_name}</td>
+                  <td>
+                    <select onchange="updateCandidateStage(${c.id}, this.value)" class="border rounded px-1 py-0.5">
+                      ${['Applied','Screened','Interviewed','Offered','Hired','Rejected'].map(s => `<option value="${s}" ${c.stage===s?'selected':''}>${s}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td>
+                    ${c.stage === 'Offered' ? `<button onclick="hireCandidate(${c.id})" class="text-green-600 hover:underline mr-2">Hire</button>` : ''}
+                    <button onclick="deleteCandidate(${c.id})" class="text-red-600 hover:underline">Delete</button>
+                  </td>
+                </tr>`).join('') || `<tr><td colspan="3" class="text-gray-400 py-1">No candidates yet</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      `).join('') || '<p class="text-gray-400 text-sm">No job requisitions yet</p>'}
+    </div>
+  `;
+}
+
+async function updateRequisitionStatus(id, status) {
+  if (!status) return;
+  try { await api(`/recruitment/requisitions/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+function deleteRequisition(id) {
+  confirmRun('Delete this requisition and all its candidates?', () => api(`/recruitment/requisitions/${id}`, { method: 'DELETE' }));
+}
+async function addCandidate(ev, reqId) {
+  ev.preventDefault();
+  const fd = Object.fromEntries(new FormData(ev.target));
+  try {
+    await api(`/recruitment/requisitions/${reqId}/candidates`, { method: 'POST', body: JSON.stringify(fd) });
+    toast('Candidate added');
+    render();
+  } catch (e) { toast(e.message, true); }
+}
+async function updateCandidateStage(id, stage) {
+  try { await api(`/recruitment/candidates/${id}`, { method: 'PUT', body: JSON.stringify({ stage }) }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+function deleteCandidate(id) {
+  confirmRun('Delete this candidate?', () => api(`/recruitment/candidates/${id}`, { method: 'DELETE' }));
+}
+async function hireCandidate(id) {
+  const employmentType = prompt('Employment type for hire (Full-time/Part-time/Contractor/Intern):', 'Full-time');
+  if (!employmentType) return;
+  try {
+    await api(`/recruitment/candidates/${id}/hire`, { method: 'POST', body: JSON.stringify({ employment_type: employmentType }) });
+    toast('Candidate hired — employee record created');
+    render();
+  } catch (e) { toast(e.message, true); }
+}
+window.updateRequisitionStatus = updateRequisitionStatus;
+window.deleteRequisition = deleteRequisition;
+window.addCandidate = addCandidate;
+window.updateCandidateStage = updateCandidateStage;
+window.deleteCandidate = deleteCandidate;
+window.hireCandidate = hireCandidate;
+
+function attachReqForm() {
+  const f = document.getElementById('reqForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/recruitment/requisitions', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Requisition created');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+// ============ PERFORMANCE ============
+async function performanceView() {
+  const isManagerHR = ['Manager', 'HRAdmin', 'SystemAdmin'].includes(state.user.role);
+  const cycles = await api('/performance/cycles');
+  let employees = [];
+  if (isManagerHR) employees = await api('/employees');
+  const myGoals = state.employee ? await api(`/performance/goals/${state.employee.id}`) : [];
+  const myReviews = state.employee ? await api(`/performance/reviews/${state.employee.id}`) : [];
+
+  return `
+    ${isManagerHR ? `
+    <div class="card p-5 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-semibold">Review Cycles</h3>
+      </div>
+      <form id="cycleForm" class="grid sm:grid-cols-4 gap-2 mb-3">
+        <input name="name" placeholder="Cycle name" required class="border rounded-lg px-3 py-2 text-sm">
+        <select name="cycle_type" class="border rounded-lg px-3 py-2 text-sm">
+          <option>Quarterly</option><option>Annual</option><option>Internship</option>
+        </select>
+        <input name="start_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
+        <input name="end_date" type="date" class="border rounded-lg px-3 py-2 text-sm">
+        <button class="sm:col-span-4 btn-primary py-2">Create Cycle</button>
+      </form>
+      <div class="flex flex-wrap gap-2">
+        ${cycles.map(c => `<div class="text-xs bg-gray-50 rounded-lg px-3 py-2 flex items-center gap-2">${c.name} (${c.cycle_type}) <button onclick="deleteCycle(${c.id})" class="text-red-600 hover:underline">×</button></div>`).join('') || '<p class="text-gray-400 text-sm">No cycles yet</p>'}
+      </div>
+    </div>
+
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Assign a Goal</h3>
+      <form id="goalForm" class="grid sm:grid-cols-4 gap-2">
+        <select name="employee_id" required class="border rounded-lg px-3 py-2 text-sm">
+          ${employees.map(e => `<option value="${e.id}">${e.full_name}</option>`).join('')}
+        </select>
+        <select name="cycle_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">Cycle (optional)</option>
+          ${cycles.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+        </select>
+        <input name="title" placeholder="Goal title" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-2">
+        <button class="sm:col-span-4 btn-primary py-2">Assign Goal</button>
+      </form>
+    </div>
+
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Intern Evaluation (simplified end-of-internship review)</h3>
+      <form id="internEvalForm" class="grid sm:grid-cols-4 gap-2">
+        <select name="employee_id" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-2">
+          ${employees.filter(e => e.employment_type === 'Intern').map(e => `<option value="${e.id}">${e.full_name}</option>`).join('') || '<option value="">No interns</option>'}
+        </select>
+        <input name="rating" type="number" step="0.1" min="0" max="5" placeholder="Rating (0-5)" class="border rounded-lg px-3 py-2 text-sm">
+        <button class="btn-primary py-2">Submit</button>
+        <textarea name="feedback" placeholder="Feedback" class="sm:col-span-4 border rounded-lg px-3 py-2 text-sm" rows="2"></textarea>
+      </form>
+    </div>
+    ` : ''}
+
+    ${state.employee ? `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">My Goals</h3>
+      <div class="space-y-2">
+        ${myGoals.map(g => `
+          <div class="border-b pb-2 flex justify-between items-center">
+            <div>
+              <p class="text-sm font-medium">${g.title}</p>
+              <p class="text-xs text-gray-500">${g.description || ''}</p>
+            </div>
+            <select onchange="updateGoalStatus(${g.id}, this.value)" class="text-xs border rounded-lg px-2 py-1">
+              ${['Not-started','In-progress','Completed'].map(s => `<option value="${s}" ${g.status===s?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>`).join('') || '<p class="text-gray-400 text-sm">No goals assigned yet</p>'}
+      </div>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">My Self-Assessment</h3>
+      <form id="selfAssessForm" class="space-y-2">
+        <select name="cycle_id" class="w-full border rounded-lg px-3 py-2 text-sm">
+          ${cycles.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+        </select>
+        <textarea name="self_assessment" placeholder="How did this cycle go for you?" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+        <button class="btn-primary">Submit Self-Assessment</button>
+      </form>
+      <div class="mt-4 space-y-2">
+        ${myReviews.map(r => `
+          <div class="border-t pt-2 text-sm">
+            <p><b>Status:</b> ${r.status}</p>
+            ${r.manager_rating ? `<p><b>Manager rating:</b> ${r.manager_rating}/5</p>` : ''}
+            ${r.manager_feedback ? `<p class="text-gray-500">${r.manager_feedback}</p>` : ''}
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+  `;
+}
+
+function deleteCycle(id) {
+  confirmRun('Delete this review cycle?', () => api(`/performance/cycles/${id}`, { method: 'DELETE' }));
+}
+async function updateGoalStatus(id, status) {
+  try { await api(`/performance/goals/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+window.deleteCycle = deleteCycle;
+window.updateGoalStatus = updateGoalStatus;
+
+function attachPerformanceForms() {
+  const cycleForm = document.getElementById('cycleForm');
+  if (cycleForm) cycleForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(cycleForm));
+    try { await api('/performance/cycles', { method: 'POST', body: JSON.stringify(fd) }); toast('Cycle created'); render(); }
+    catch (err) { toast(err.message, true); }
+  });
+  const goalForm = document.getElementById('goalForm');
+  if (goalForm) goalForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(goalForm));
+    if (!fd.cycle_id) delete fd.cycle_id;
+    try { await api('/performance/goals', { method: 'POST', body: JSON.stringify(fd) }); toast('Goal assigned'); render(); }
+    catch (err) { toast(err.message, true); }
+  });
+  const internEvalForm = document.getElementById('internEvalForm');
+  if (internEvalForm) internEvalForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(internEvalForm));
+    fd.rating = fd.rating ? parseFloat(fd.rating) : null;
+    try { await api('/performance/intern-evaluations', { method: 'POST', body: JSON.stringify(fd) }); toast('Evaluation submitted'); render(); }
+    catch (err) { toast(err.message, true); }
+  });
+  const selfAssessForm = document.getElementById('selfAssessForm');
+  if (selfAssessForm) selfAssessForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(selfAssessForm));
+    try { await api('/performance/reviews', { method: 'POST', body: JSON.stringify(fd) }); toast('Self-assessment submitted'); render(); }
+    catch (err) { toast(err.message, true); }
+  });
+}
+
+// ============ PAYROLL (HR Admin) ============
+async function payrollView() {
+  const runs = await api('/payroll/runs');
+  return `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Create Payroll Run</h3>
+      <form id="payrollRunForm" class="flex gap-2">
+        <select name="period_month" class="border rounded-lg px-3 py-2 text-sm">
+          ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}
+        </select>
+        <input name="period_year" type="number" value="2026" class="border rounded-lg px-3 py-2 text-sm w-24">
+        <button class="btn-primary">Create Run</button>
+      </form>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Payroll Runs</h3>
+      <div class="space-y-2">
+        ${runs.map(r => `
+          <div class="border rounded-lg p-3">
+            <div class="flex justify-between items-center">
+              <div><b>${r.period_month}/${r.period_year}</b> ${badge(r.status, r.status === 'Processed' ? 'badge-Approved' : 'badge-Pending')}</div>
+              <div class="flex gap-2">
+                ${r.status === 'Draft' ? `<button onclick="processRun(${r.id})" class="btn-primary text-xs px-3 py-1.5 rounded-lg">Process</button>
+                <button onclick="deleteRun(${r.id})" class="text-xs text-red-600 hover:underline">Delete</button>` : ''}
+                <button onclick="viewRunItems(${r.id})" class="text-xs text-blue-600 hover:underline">View Items</button>
+              </div>
+            </div>
+            <div id="runItems-${r.id}" class="mt-2"></div>
+          </div>
+        `).join('') || '<p class="text-gray-400 text-sm">No payroll runs yet</p>'}
+      </div>
+    </div>
+  `;
+}
+
+async function processRun(id) {
+  try { await api(`/payroll/runs/${id}/process`, { method: 'POST' }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+function deleteRun(id) {
+  confirmRun('Delete this draft payroll run?', () => api(`/payroll/runs/${id}`, { method: 'DELETE' }));
+}
+async function viewRunItems(id) {
+  const el = document.getElementById(`runItems-${id}`);
+  const items = await api(`/payroll/runs/${id}/items`);
+  el.innerHTML = `
+    <table class="w-full text-xs mt-2">
+      <thead><tr class="text-left text-gray-500"><th class="pb-1">Employee</th><th>Type</th><th>Gross</th><th>Deductions</th><th>Net</th></tr></thead>
+      <tbody>
+        ${items.map(i => `<tr class="border-t"><td class="py-1">${i.full_name}</td><td>${i.pay_type}</td><td>${i.basic_amount}</td><td>${i.deductions}</td><td class="font-semibold">${i.net_amount}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+}
+window.processRun = processRun;
+window.deleteRun = deleteRun;
+window.viewRunItems = viewRunItems;
+
+function attachPayrollRunForm() {
+  const f = document.getElementById('payrollRunForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/payroll/runs', { method: 'POST', body: JSON.stringify(fd) });
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+// ============ REPORTS (HR Admin) ============
+async function reportsView() {
+  const [headcount, utilization] = await Promise.all([
+    api('/admin/reports/headcount'),
+    api('/projects/reports/utilization')
+  ]);
+  return `
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">Headcount by Employment Type</h3>
+        ${headcount.byType.map(t => `<div class="flex justify-between border-b py-1.5 text-sm"><span>${t.employment_type}</span><b>${t.count}</b></div>`).join('')}
+        <div class="mt-3 text-sm text-gray-500">Active: ${headcount.totalActive} · Offboarded: ${headcount.totalOffboarded} · Attrition: ${headcount.attritionRate}%</div>
+        <a href="${API}/admin/reports/export/headcount" target="_blank" class="text-xs text-blue-600 hover:underline mt-2 inline-block">Export CSV</a>
+      </div>
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">Billable Utilization</h3>
+        ${utilization.map(u => `<div class="flex justify-between border-b py-1.5 text-sm"><span>${u.full_name}</span><b>${u.billable_pct}%</b></div>`).join('') || '<p class="text-gray-400 text-sm">No time logs yet</p>'}
+      </div>
+    </div>
+  `;
+}
+
+// ============ SETTINGS (HR Admin / SystemAdmin) ============
+async function settingsView() {
+  const isSystemAdmin = state.user.role === 'SystemAdmin';
+  const [depts, desigs, locs, skills, policies] = await Promise.all([
+    api('/admin/departments'), api('/admin/designations'), api('/admin/locations'),
+    api('/admin/skills'), api('/leave/policies')
+  ]);
+
+  function lookupSection(title, table, items, nameField) {
+    return `
+      <div class="card p-5">
+        <h3 class="font-semibold mb-3">${title}</h3>
+        <form onsubmit="addLookup(event, '${table}', '${nameField}')" class="flex gap-2 mb-3">
+          <input name="${nameField}" placeholder="New ${title.toLowerCase().slice(0,-1)}" required class="border rounded-lg px-3 py-2 text-sm flex-1">
+          <button class="btn-primary">Add</button>
+        </form>
+        <div class="space-y-1 max-h-56 overflow-y-auto">
+          ${items.map(i => `
+            <div class="flex justify-between items-center text-sm border-b py-1.5">
+              <span>${i[nameField]}</span>
+              <span class="flex gap-2">
+                <button onclick="editLookup('${table}', ${i.id}, '${nameField}', '${esc(i[nameField])}')" class="text-xs text-blue-600 hover:underline">Edit</button>
+                <button onclick="deleteLookup('${table}', ${i.id})" class="text-xs text-red-600 hover:underline">Delete</button>
+              </span>
+            </div>`).join('') || '<p class="text-gray-400 text-xs">None yet</p>'}
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="grid md:grid-cols-2 gap-4 mb-4">
+      ${lookupSection('Departments', 'departments', depts, 'name')}
+      ${lookupSection('Designations', 'designations', desigs, 'title')}
+      ${lookupSection('Locations', 'locations', locs, 'name')}
+      ${lookupSection('Skills', 'skills', skills, 'name')}
+    </div>
+
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Leave Policies</h3>
+      <form id="policyCreateForm" class="grid sm:grid-cols-6 gap-2 mb-3">
+        <input name="name" placeholder="Policy name" required class="border rounded-lg px-3 py-2 text-sm sm:col-span-2">
+        <select name="applies_to" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="Standard">Standard</option>
+          <option value="Intern">Intern</option>
+        </select>
+        <input name="annual_days" type="number" placeholder="Annual" class="border rounded-lg px-3 py-2 text-sm">
+        <input name="sick_days" type="number" placeholder="Sick" class="border rounded-lg px-3 py-2 text-sm">
+        <input name="casual_days" type="number" placeholder="Casual" class="border rounded-lg px-3 py-2 text-sm">
+        <button class="sm:col-span-6 btn-primary py-2">Add Policy</button>
+      </form>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Name</th><th>Applies To</th><th>Annual</th><th>Sick</th><th>Casual</th><th></th></tr></thead>
+        <tbody>
+          ${policies.map(p => `
+            <tr class="border-t">
+              <td class="py-1.5">${p.name}</td><td>${p.applies_to}</td><td>${p.annual_days}</td><td>${p.sick_days}</td><td>${p.casual_days}</td>
+              <td>
+                <button onclick="editLeavePolicy(${p.id}, ${p.annual_days}, ${p.sick_days}, ${p.casual_days})" class="text-xs text-blue-600 hover:underline">Edit</button>
+                <button onclick="deleteLeavePolicy(${p.id})" class="text-xs text-red-600 hover:underline ml-2">Delete</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    ${isSystemAdmin ? `
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Audit Log (latest 50)</h3>
+      <div id="auditLogBox" class="text-xs space-y-1 max-h-96 overflow-y-auto">Loading...</div>
+    </div>` : ''}
+  `;
+}
+
+async function loadAuditLog() {
+  const box = document.getElementById('auditLogBox');
+  if (!box) return;
+  try {
+    const audit = await api('/admin/audit-logs');
+    box.innerHTML = audit.slice(0, 50).map(a => `<div class="border-b py-1"><b>${a.action}</b> by ${a.user_email || 'system'} <span class="text-gray-400">— ${new Date(a.created_at).toLocaleString()}</span></div>`).join('') || '<p class="text-gray-400">No activity yet</p>';
+  } catch (e) { box.innerHTML = `<p class="text-red-600">${e.message}</p>`; }
+}
+
+async function addLookup(ev, table, nameField) {
+  ev.preventDefault();
+  const fd = Object.fromEntries(new FormData(ev.target));
+  try {
+    await api(`/admin/${table}`, { method: 'POST', body: JSON.stringify(fd) });
+    toast('Added');
+    render();
+  } catch (e) { toast(e.message, true); }
+}
+function editLookup(table, id, nameField, current) {
+  const val = prompt('Edit value:', current);
+  if (val === null || val === current) return;
+  confirmRun('Save change?', () => api(`/admin/${table}/${id}`, { method: 'PUT', body: JSON.stringify({ [nameField]: val }) }));
+}
+function deleteLookup(table, id) {
+  confirmRun('Delete this entry? Employees using it will just have it unset, not be deleted.', () => api(`/admin/${table}/${id}`, { method: 'DELETE' }));
+}
+function editLeavePolicy(id, annual, sick, casual) {
+  const a = prompt('Annual days:', annual); if (a === null) return;
+  const s = prompt('Sick days:', sick); if (s === null) return;
+  const c = prompt('Casual days:', casual); if (c === null) return;
+  confirmRun('Save policy changes?', () => api(`/leave/policies/${id}`, {
+    method: 'PUT', body: JSON.stringify({ annual_days: parseFloat(a), sick_days: parseFloat(s), casual_days: parseFloat(c) })
+  }));
+}
+function deleteLeavePolicy(id) {
+  confirmRun('Delete this leave policy?', () => api(`/leave/policies/${id}`, { method: 'DELETE' }));
+}
+window.addLookup = addLookup;
+window.editLookup = editLookup;
+window.deleteLookup = deleteLookup;
+window.editLeavePolicy = editLeavePolicy;
+window.deleteLeavePolicy = deleteLeavePolicy;
+
+function attachSettingsForms() {
+  const f = document.getElementById('policyCreateForm');
+  if (f) f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    try {
+      await api('/leave/policies', { method: 'POST', body: JSON.stringify(fd) });
+      toast('Policy added');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+  loadAuditLog();
+}
+
+// ============ FINANCE (Compensation) ============
+async function financeView() {
+  const employees = await api('/employees');
+  return `
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Compensation Reference (View/Update)</h3>
+      <p class="text-xs text-gray-500 mb-3">Finance manages basic salary/stipend reference data only — payroll processing is done by HR Admin.</p>
+      <div class="space-y-2">
+        ${employees.map(e => `
+          <div class="border rounded-lg p-3 flex justify-between items-center">
+            <div><b>${e.full_name}</b> ${badge(e.employment_type, 'badge-' + e.employment_type)}</div>
+            <button onclick="editComp(${e.id}, '${e.employment_type}')" class="text-xs text-blue-600 hover:underline">Edit Comp.</button>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+async function editComp(id, type) {
+  let field = 'basic_salary';
+  if (type === 'Intern') field = 'stipend_amount';
+  if (type === 'Contractor') field = 'contractor_rate';
+  const val = prompt(`Enter ${field.replace('_', ' ')}:`);
+  if (val === null) return;
+  try {
+    await api(`/payroll/compensation/${id}`, { method: 'POST', body: JSON.stringify({ [field]: parseFloat(val) || 0, currency: 'PKR' }) });
+    toast('Updated');
+  } catch (e) { toast(e.message, true); }
+}
+window.editComp = editComp;
+
+// ============ REIMBURSEMENTS (Finance/HR review queue) ============
+async function reimbursementsView() {
+  const items = await api('/projects/reimbursements');
+  return `
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Reimbursement Claims</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Employee</th><th>Project</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${items.map(r => `
+            <tr class="border-t">
+              <td class="py-1.5">${r.full_name}</td><td>${r.project_name || '-'}</td><td>${r.amount}</td><td>${badge(r.status, 'badge-' + r.status)}</td>
+              <td>
+                ${r.status === 'Pending' ? `<button onclick="reviewReimb(${r.id},'Approved')" class="text-xs text-green-600 hover:underline mr-2">Approve</button><button onclick="reviewReimb(${r.id},'Rejected')" class="text-xs text-red-600 hover:underline">Reject</button>` : ''}
+                ${r.status === 'Approved' ? `<button onclick="reviewReimb(${r.id},'Paid')" class="text-xs text-blue-600 hover:underline">Mark Paid</button>` : ''}
+              </td>
+            </tr>
+          `).join('') || '<tr><td colspan="5" class="text-gray-400 py-2">No claims</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+async function reviewReimb(id, status) {
+  try { await api(`/projects/reimbursements/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+window.reviewReimb = reviewReimb;
+
+// ============ USERS (SystemAdmin) ============
+async function usersView() {
+  const [users, employees] = await Promise.all([api('/auth/users'), api('/employees')]);
+  return `
+    <div class="card p-5 mb-4">
+      <h3 class="font-semibold mb-3">Create User Account</h3>
+      <form id="userForm" class="grid sm:grid-cols-4 gap-2">
+        <input name="email" type="email" placeholder="Email" required class="border rounded-lg px-3 py-2 text-sm">
+        <input name="password" type="password" placeholder="Password" required class="border rounded-lg px-3 py-2 text-sm">
+        <select name="role" class="border rounded-lg px-3 py-2 text-sm">
+          ${['Employee','Manager','HRAdmin','SystemAdmin','FinanceOfficer'].map(r => `<option>${r}</option>`).join('')}
+        </select>
+        <select name="employee_id" class="border rounded-lg px-3 py-2 text-sm">
+          <option value="">Link to employee (optional)</option>
+          ${employees.map(e => `<option value="${e.id}">${e.full_name}</option>`).join('')}
+        </select>
+        <button class="sm:col-span-4 btn-primary py-2">Create User</button>
+      </form>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">All User Accounts</h3>
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-gray-500"><th class="pb-2">Email</th><th>Role</th><th>Active</th><th></th></tr></thead>
+        <tbody>
+          ${users.map(u => `
+            <tr class="border-t">
+              <td class="py-1.5">${u.email}</td>
+              <td>
+                <select onchange="updateUserRole(${u.id}, this.value)" class="border rounded px-2 py-1 text-xs">
+                  ${['Employee','Manager','HRAdmin','SystemAdmin','FinanceOfficer'].map(r => `<option ${u.role===r?'selected':''}>${r}</option>`).join('')}
+                </select>
+              </td>
+              <td>
+                <button onclick="toggleUserActive(${u.id}, ${!u.is_active})" class="text-xs ${u.is_active ? 'text-green-600' : 'text-gray-400'} hover:underline">${u.is_active ? 'Active' : 'Inactive'}</button>
+              </td>
+              <td><button onclick="deleteUser(${u.id})" class="text-xs text-red-600 hover:underline">Delete</button></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+async function updateUserRole(id, role) {
+  try { await api(`/auth/users/${id}`, { method: 'PUT', body: JSON.stringify({ role }) }); toast('Role updated'); }
+  catch (e) { toast(e.message, true); render(); }
+}
+async function toggleUserActive(id, newVal) {
+  try { await api(`/auth/users/${id}`, { method: 'PUT', body: JSON.stringify({ is_active: newVal }) }); render(); }
+  catch (e) { toast(e.message, true); }
+}
+function deleteUser(id) {
+  confirmRun('Delete this user account? (Employee record is kept.)', () => api(`/auth/users/${id}`, { method: 'DELETE' }));
+}
+window.updateUserRole = updateUserRole;
+window.toggleUserActive = toggleUserActive;
+window.deleteUser = deleteUser;
+
+function attachUserForm() {
+  const f = document.getElementById('userForm');
+  if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(f));
+    if (!fd.employee_id) delete fd.employee_id;
+    try {
+      await api('/auth/users', { method: 'POST', body: JSON.stringify(fd) });
+      toast('User created');
+      render();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+// ============ ROUTER ============
+async function renderContent() {
+  const contentEl = document.getElementById('content-slot');
+  if (!contentEl) return;
+  contentEl.innerHTML = '<div class="text-center py-12 text-gray-400">Loading...</div>';
+  let html = '';
+  try {
+    switch (state.tab) {
+      case 'dashboard': html = await dashboardView(); break;
+      case 'attendance': html = await attendanceView(); break;
+      case 'leave': html = await leaveView(); break;
+      case 'projects': html = await projectsView(); break;
+      case 'tasks': html = await tasksView(); break;
+      case 'payslips': html = await payslipsView(); break;
+      case 'hrdesk': html = await hrdeskView(); break;
+      case 'team': html = await teamView(); break;
+      case 'approvals': html = await approvalsView(); break;
+      case 'employees': html = await employeesView(); break;
+      case 'recruitment': html = await recruitmentView(); break;
+      case 'performance': html = await performanceView(); break;
+      case 'payroll': html = await payrollView(); break;
+      case 'reports': html = await reportsView(); break;
+      case 'settings': html = await settingsView(); break;
+      case 'finance': html = await financeView(); break;
+      case 'reimbursements': html = await reimbursementsView(); break;
+      case 'users': html = await usersView(); break;
+      default: html = '<p>Not found</p>';
+    }
+  } catch (e) {
+    html = `<div class="card p-6 text-red-600">Error: ${e.message}</div>`;
+  }
+  contentEl.innerHTML = html;
+  attachCorrectionForm();
+  attachLeaveForm();
+  attachTimeLogForm();
+  attachReimbForm();
+  attachProjForm();
+  attachTaskForm();
+  attachTicketForm();
+  attachAnnForm();
+  attachPolicyForm();
+  attachPayrollRunForm();
+  attachReqForm();
+  attachPerformanceForms();
+  attachSettingsForms();
+  attachUserForm();
+}
+
+async function render() {
+  const el = document.getElementById('app');
+  if (!state.token) { loginScreen(); return; }
+  if (!state.user) {
+    try { await loadMe(); } catch (e) { loginScreen(); return; }
+  }
+  el.innerHTML = shell('<div id="content-slot"></div>');
+  await renderContent();
+}
+
+render();
+</script>
+</body>
+</html>
